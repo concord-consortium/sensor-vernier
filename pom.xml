@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.concord</groupId>
+    <artifactId>maven2-parent</artifactId>
+    <version>6</version>
+    <relativePath>../Builds/maven2-parent</relativePath>
+  </parent>
+  
+  <groupId>org.concord.sensor</groupId>
+  <artifactId>sensor-vernier</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Sensor Vernier</name>
+  <description>
+     Java implementation of Vernier protocols 
+  </description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.concord</groupId>
+      <artifactId>framework</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.concord</groupId>
+      <artifactId>data</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.concord.external.rxtx</groupId>
+      <artifactId>rxtx-comm</artifactId>
+      <version>2.1.7</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <!--MVN_AUTO 
+    This comment and the elements below it are automatically 
+    generated any changes you make to these elements will be replaced if the pom is
+    regenerated. Do not edit this comment or the elements below it.-->
+
+  <!--this is required to find out parent pom you should-->
+  <repositories>
+    <repository>
+      <id>cc-repo-internal</id>
+      <name>Concord Consortium Internal</name>
+      <url>http://source.concord.org/maven2/internal</url>
+      <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <scm>
+    <connection>
+      scm:svn:http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-vernier
+    </connection>
+    <developerConnection>
+      scm:svn:svn+ssh://username@svn.concord.org/home/subversion/projects/trunk/common/java/sensor/sensor-vernier
+    </developerConnection>
+    <url>
+      http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-vernier
+    </url>
+  </scm>
+</project>

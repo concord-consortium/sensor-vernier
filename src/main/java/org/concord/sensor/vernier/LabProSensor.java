@@ -20,14 +20,19 @@ class LabProSensor extends SensorConfigImpl
     private final LabProSensorDevice device;
 
     private final DeviceService devService;
+
+	private int channelNumber;
     
 	/**
      * @param device
+	 * @param channelNumber 
      */
-    LabProSensor(LabProSensorDevice device, DeviceService devService)
+    LabProSensor(LabProSensorDevice device, DeviceService devService, 
+    		int channelNumber)
     {
         this.device = device;
         this.devService = devService;
+        this.channelNumber = channelNumber;
     }
 
 	SensorCalibration calibrationEquation;
@@ -43,7 +48,19 @@ class LabProSensor extends SensorConfigImpl
 	 */
 	int translateSensor(int sensorId, SensorRequest request)
 	{
-		if(sensorId >= 20){
+		if(channelNumber > 10){
+			
+			if(sensorId == 2) {
+				setConfirmed(true);
+
+				// it is digital sensor
+				setUnit(new SensorUnit("m"));
+				setType(QUANTITY_DISTANCE);
+
+				setStepSize(0.01f);
+			}
+			
+		} else if(sensorId >= 20){
 			// This is a smart sensor which means it has 
 			// calibration information stored in the sensor itself
 			
@@ -402,6 +419,11 @@ class LabProSensor extends SensorConfigImpl
 		new LinearCalibration(
 				0f,      // k0
 				67.69f   // k1
-				); 
+				);
+
+	public int getChannelNumber()
+    {
+    	return channelNumber;
+    } 
 
 }

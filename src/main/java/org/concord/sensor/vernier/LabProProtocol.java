@@ -99,6 +99,8 @@ public class LabProProtocol
 		public final static int IR_TEMP = 73;
 
 	}
+	public final static boolean PRINT_SENDS = true;
+	
 	LabProSensorDevice labProDevice;
 	
 	public LabProProtocol(LabProSensorDevice device)
@@ -116,6 +118,10 @@ public class LabProProtocol
 		}
 		String cmdStr = "s{" + command + params + "}\n";
 
+		if(PRINT_SENDS){
+			System.out.print("sending: " + cmdStr);
+		}
+		
 		byte [] strBytes = cmdStr.getBytes();
 		// this might not work in waba
 		labProDevice.getPort().write(strBytes);		
@@ -162,9 +168,16 @@ public class LabProProtocol
 	public void dataCollectionSetup(float samptime, int numpoints, int trigtype) 
 	throws SerialException
 	{
-		sendCommand(LabProProtocol.CMD.DATA_COLLECTION_SETUP, "" + samptime + "," + trigtype);
+		sendCommand(LabProProtocol.CMD.DATA_COLLECTION_SETUP, "" 
+				+ samptime + "," + numpoints + "," + trigtype);
 	}
 
+	public void portPowerControl(int powerControl) 
+		throws SerialException
+	{
+		sendCommand(CMD.PORT_POWER_CONTROL_COMMAND, 
+				"" + powerControl);
+	}
 	
 	public void reset() 
 		throws SerialException
@@ -176,8 +189,11 @@ public class LabProProtocol
 	public void wakeUp()
 		throws SerialException
 	{
+		if(PRINT_SENDS){
+			System.out.println("s");
+		}
 		labProDevice.getPort().write(wakeUpBytes);
-		labProDevice.getDeviceService().sleep(500);
+		labProDevice.getDeviceService().sleep(100);
 	}
 	
 

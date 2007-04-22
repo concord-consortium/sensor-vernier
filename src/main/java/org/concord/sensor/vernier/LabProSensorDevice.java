@@ -153,22 +153,27 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		try {
 			protocol.wakeUp();
 
+			// Turning on the power might be necessary before reading
+			// from sensors that require power
+			protocol.portPowerControl(-2);
+
 			// send the read command
 			float channelStatus [] = new float[3]; 
 			
 			for(int i=0; i<CHANNELS.length; i++){
-				protocol.requestChannelStatus(CHANNELS[i], 0);
+				int channelNumber = CHANNELS[i];
+				protocol.requestChannelStatus(channelNumber, 0);
 
 				int count = readValues(channelStatus);
 				if(count < 3){
 					// there was an error
 					log("error reading channel status from device chan: " + 
-							CHANNELS[i]);
+							channelNumber);
 					continue;
 				} 
 				
 				int sensorId = round(channelStatus[0]);
-				log("chan: " + CHANNELS[i] + " sens id: " + sensorId);
+				log("chan: " + channelNumber + " sens id: " + sensorId);
 				
 				// only add the sensor if we can identify that it is really 
 				// there.  There might be some trick we can use to see if 
@@ -178,7 +183,8 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 					continue;
 				}
 						
-				LabProSensor sensorConfig = new LabProSensor(this, devService);
+				LabProSensor sensorConfig = 
+					new LabProSensor(this, devService, channelNumber);
 				
 				// translate the vernier id to the SenorConfig id
 				int ret = sensorConfig.translateSensor(sensorId, null);
@@ -189,12 +195,17 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			e.printStackTrace();
 		}
 		
-		SensorConfig [] sensorConfigArr = 
-			new SensorConfig[sensorConfigVect.size()];
-		Vector.copyArray(sensorConfigVect.items, 0, sensorConfigArr, 
-				0, sensorConfigVect.size());
-		expConfig.setSensorConfigs(sensorConfigArr);
-
+		int numSensors = sensorConfigVect.size();
+		if(numSensors == 0){
+			expConfig.setSensorConfigs(null);			
+		} else {
+			SensorConfig [] sensorConfigArr = 
+				new SensorConfig[sensorConfigVect.size()];
+			Vector.copyArray(sensorConfigVect.items, 0, sensorConfigArr, 
+					0, sensorConfigVect.size());
+			expConfig.setSensorConfigs(sensorConfigArr);
+		}
+		
 	    expConfig.setExactPeriod(true);
 
 	    return expConfig;
@@ -255,15 +266,33 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			protocol.wakeUp();
 			protocol.reset();
 
+			// get the current channel from the currentConfig
+			LabProSensor sensor = 
+				(LabProSensor)currentConfig.getSensorConfigs()[0];
+			
+			int channelNumber = sensor.getChannelNumber();
 			// collected data from channel one using the 
 			// auto id operation
-			protocol.channelSetup(1, 1);
 			
+			protocol.channelSetup(channelNumber, 1);
+			
+			// Turning on the power seems necessary before reading
+			// from the gomotion in real time.  It might also be
+			// necessary for something like the relative humidity sensor
+			// The power is not turned off immediately when the device is reset.
+			// however it does time out after a reset  
+			protocol.portPowerControl(-2);
+
 			// start the collection
 			// sample once every 0.5 seconds
 			// use realtime mode (-1)
-			// start sampling now (0)
-			protocol.dataCollectionSetup(0.5f,-1,0);
+			// start sampling now (0)			
+			protocol.dataCollectionSetup(currentConfig.getPeriod(),-1,0);
+			
+			// If the power is not turned on the following command will make
+			// the gomotion collect data, but it is not real time so the 
+			// read method would have to be modfied. 
+			//protocol.dataCollectionSetup(0.5f,100,0);
 			
 			return super.start();
 		} catch (SerialException e) {
@@ -284,6 +313,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			
 			// send the reset
 			protocol.reset();
+						
 		} catch (SerialException e) {
 			e.printStackTrace();
 		}
@@ -362,42 +392,66 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		// The timeout here should be set depending on how long it takes
 		// the LabPro to get back to us with the first byte
 		// check that the first byte is a }		
+
+		// It ought to be faster to read a whole chunk of bytes until the last
+		// byte read is }
 		int ret = 0;
 		int off = 0;
-		
-		ret = port.readBytes(buf, off, 1, 1000);
-		if(ret != 1){
-			log("Didn't get any bytes from device ret: " + ret);
-			return -1;
+		int numBytes = 0;
+		int attempts = 0;
+		while(attempts < 10){
+			// give it 100ms to send the reponse
+			ret = port.readBytes(buf, off, buf.length-off, 100);		
+			if(ret < 0){
+				log("error reading values err: " + ret);
+				return -1;
+			}
+			
+			if(ret == 0){
+				// should at least get something
+				log("Didn't get any bytes from device attempt: " + attempts);
+				attempts++;
+				continue;
+			}
+			
+			numBytes += ret;
+			
+			if(buf[numBytes-1] == '\n'){
+				break;
+			}
+			
+			off += ret;
+			attempts++;
 		}
-		byte currentByte = buf[0];
 
-		if(currentByte != '{'){
-			log("First byte isn't { instead it is: " + (char)currentByte);
-			return -1;
-		}
-		off = 1;
-		
-		while(ret == 1 && currentByte != '\n'){
-			ret = port.readBytes(buf, off, 1, 100);
-			currentByte = buf[off++];
-		}
-					
-		if(ret != 1 || currentByte != '\n'){
+			
+		if(buf[numBytes-1] != '\n'){
 			// we got an error 
 			log("error reading values ret: " + ret + 
-					" lastB: " + (char)currentByte);
+					" lastB: " + (char)buf[ret-1]);
 			return -1;
 		}
 		
 		// we should now have a buffer with a string in it from 0-off
 		// I don't know if this will work in waba
-		String result = new String(buf, 0, off);
+		String result = new String(buf, 0, numBytes);
 
-		// now we have to use basic string parsing because waba and java don't 
-		// share the tokenizer
-		// but sense we are in a crunch lets just use the java conventions
+		// We should use basic string parsing because waba and java don't 
+		// share a common tokenizer class
+		// but since we are in a time crunch lets just use the java conventions
 		// and deal with the waba stuff when we need it.
+		
+		// first find the last occurance of { that way we can 
+		// skip any junk that came with this. 
+		int startingIndex = result.lastIndexOf("{");
+		
+		if(startingIndex == -1){
+			// invalid return format
+			log("readValues got invalid return: " + result);
+		}
+		
+		result = result.substring(startingIndex);
+		
 		int count = 0;
 		StringTokenizer toks = new StringTokenizer(result, "{},");
 		while(toks.hasMoreTokens() && count < values.length){
