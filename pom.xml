@@ -20,6 +20,12 @@
   <dependencies>
     <dependency>
       <groupId>org.concord</groupId>
+      <artifactId>sensor</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.concord</groupId>
       <artifactId>framework</artifactId>
       <version>0.1.0-SNAPSHOT</version>
       <scope>compile</scope>
