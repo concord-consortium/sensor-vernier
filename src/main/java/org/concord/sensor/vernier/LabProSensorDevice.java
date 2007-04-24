@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
 import org.concord.sensor.ExperimentConfig;
 import org.concord.sensor.ExperimentRequest;
 import org.concord.sensor.SensorConfig;
-import org.concord.sensor.SensorRequest;
 import org.concord.sensor.device.DeviceReader;
 import org.concord.sensor.device.DeviceService;
 import org.concord.sensor.device.impl.AbstractStreamingSensorDevice;
@@ -399,7 +398,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		int off = 0;
 		int numBytes = 0;
 		int attempts = 0;
-		while(attempts < 10){
+		while(attempts < 5){
 			// give it 100ms to send the reponse
 			ret = port.readBytes(buf, off, buf.length-off, 100);		
 			if(ret < 0){
@@ -424,7 +423,12 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			attempts++;
 		}
 
-			
+		if(numBytes < 1){
+			// didn't find any bytes at all probably no device is attached
+			log("error reading values: no data returned " + attempts + " attempts");
+			return -1;
+		}
+		
 		if(buf[numBytes-1] != '\n'){
 			// we got an error 
 			log("error reading values ret: " + ret + 
