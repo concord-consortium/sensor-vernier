@@ -19,8 +19,6 @@ class LabProSensor extends SensorConfigImpl
      */
     private final LabProSensorDevice device;
 
-    private final DeviceService devService;
-
 	private int channelNumber;
     
 	/**
@@ -31,7 +29,6 @@ class LabProSensor extends SensorConfigImpl
     		int channelNumber)
     {
         this.device = device;
-        this.devService = devService;
         this.channelNumber = channelNumber;
     }
 
@@ -363,9 +360,9 @@ class LabProSensor extends SensorConfigImpl
 		/*
 		 * From the vernier light sensor booklet.
 		 */ 
-		public final static float ILLUM_B0 = 5.0E-3f;  // most sensitive switch position
+		//public final static float ILLUM_B0 = 5.0E-3f;  // most sensitive switch position
 		public final static float ILLUM_B1 = 4.5E-4f;  // middle switch position
-		public final static float ILLUM_B2 = 2.0E-5f;  // least sensitive (outdoor) position
+		//public final static float ILLUM_B2 = 2.0E-5f;  // least sensitive (outdoor) position
 		public float calibrate(float voltage)
 		{
 			// The only sensor I have doesn't have a switch

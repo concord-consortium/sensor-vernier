@@ -186,7 +186,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 					new LabProSensor(this, devService, channelNumber);
 				
 				// translate the vernier id to the SenorConfig id
-				int ret = sensorConfig.translateSensor(sensorId, null);
+				sensorConfig.translateSensor(sensorId, null);
 				sensorConfigVect.add(sensorConfig);
 			}
 		} catch (SerialException e) {
