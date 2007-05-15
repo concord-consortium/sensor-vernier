@@ -79,9 +79,18 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			protocol.wakeUp();
 			protocol.requestSystemStatus();
 			
+			// to work with rxtx and the keyspan USA19QW on osx
+			// some pause is needed before reading from the device
+			// otherwise it doesn't get any bytes.  
+			// this is a hack so we'll take it out, if we really
+			// need to do this it should be a change to the rxtx
+			// getDeviceService().sleep(5);
+
 			//read result
 			float [] values = new float[18];
 			int count = readValues(values);
+			
+			// with rxtx-19QW-osx, sometimes the count returned is 16
 			if(count != 17){
 				if(count >= 0){
 					log("wrong number of values returned for system status ret: " +
@@ -335,7 +344,23 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		byte currentByte = sb.buf[sb.processedBytes];
 		if(currentByte != '{'){
 			log("First byte isn't { instead it is: " + (char)currentByte);
-			return -1;
+
+			// we should look ahead and find the first byte that is {
+			int off = sb.processedBytes + 1;
+			while(off < sb.totalBytes && currentByte != '{'){
+				currentByte = sb.buf[off++];
+			}
+			
+			if(currentByte != '{'){
+				// we didn't find the beginning char, so we only read part 
+				// of a packet
+				// increment processedBytes to the end and return that we didn't find any values
+				sb.processedBytes = off;
+				return 0;				
+			} else {
+				// start the processed bytes at the '{'
+				sb.processedBytes = off - 1;
+			}			
 		}
 
 		int off = sb.processedBytes + 1;
@@ -365,8 +390,13 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		StringTokenizer toks = new StringTokenizer(result, "{},");
 		while(toks.hasMoreTokens() && count < values.length){
 			String numberStr = toks.nextToken();
-			float number = Float.parseFloat(numberStr);
-			values[count] = number;
+			try {
+				float number = Float.parseFloat(numberStr);
+				values[count] = number;
+			} catch (NumberFormatException e){
+				System.err.println("error parsing: " + numberStr);
+				e.printStackTrace();
+			}
 			count++;
 		}
 		
@@ -431,8 +461,11 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		
 		if(buf[numBytes-1] != '\n'){
 			// we got an error 
-			log("error reading values ret: " + ret + 
-					" lastB: " + (char)buf[ret-1]);
+			String lastByteStr = "";
+			if(ret>0){
+				lastByteStr = " lastB: " + (char)buf[ret-1];				
+			}
+			log("error reading values ret: " + ret + lastByteStr);
 			return -1;
 		}
 		
@@ -440,6 +473,10 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		// I don't know if this will work in waba
 		String result = new String(buf, 0, numBytes);
 
+		// optional logging should have an option in the logging
+		// system so this can be turned on and off
+		log("read: \"" + result + "\"");
+		
 		// We should use basic string parsing because waba and java don't 
 		// share a common tokenizer class
 		// but since we are in a time crunch lets just use the java conventions
@@ -452,6 +489,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		if(startingIndex == -1){
 			// invalid return format
 			log("readValues got invalid return: " + result);
+			return -1;
 		}
 		
 		result = result.substring(startingIndex);

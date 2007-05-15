@@ -2,9 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.concord</groupId>
-    <artifactId>maven2-parent</artifactId>
-    <version>8</version>
-    <relativePath>../Builds/maven2-parent</relativePath>
+    <artifactId>sensor</artifactId>
+    <version>1</version>
   </parent>
   
   <groupId>org.concord.sensor</groupId>
@@ -38,11 +37,6 @@
     </dependency>
   </dependencies>
 
-  <!--  if we have resources we will need to fix the resource directory too -->
-  <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-  </build>
-
   <!--MVN_AUTO 
     This comment and the elements below it are automatically 
     generated any changes you make to these elements will be replaced if the pom is
@@ -58,15 +52,4 @@
     </repository>
   </repositories>
 
-  <scm>
-    <connection>
-      scm:svn:http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-vernier
-    </connection>
-    <developerConnection>
-      scm:svn:svn+ssh://username@svn.concord.org/home/subversion/projects/trunk/common/java/sensor/sensor-vernier
-    </developerConnection>
-    <url>
-      http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-vernier
-    </url>
-  </scm>
 </project>
