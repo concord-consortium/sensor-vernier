@@ -11,6 +11,7 @@ import org.concord.sensor.SensorConfig;
 import org.concord.sensor.device.DeviceReader;
 import org.concord.sensor.device.DeviceService;
 import org.concord.sensor.device.impl.AbstractStreamingSensorDevice;
+import org.concord.sensor.device.impl.SensorConfigImpl;
 import org.concord.sensor.device.impl.SerialPortParams;
 import org.concord.sensor.device.impl.StreamingBuffer;
 import org.concord.sensor.impl.ExperimentConfigImpl;
@@ -550,5 +551,12 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	    // TODO Auto-generated method stub
 	    super.log(message);
 	}
-	
+
+	protected SensorConfig createSensorConfig(int type, int requestPort) 
+	{
+    	SensorConfigImpl config = new SensorConfigImpl();
+    	config.setType(type);
+    	config.setPort(requestPort+1);
+    	return config;
+	}
 }
