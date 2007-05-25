@@ -275,14 +275,25 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			protocol.reset();
 
 			// get the current channel from the currentConfig
-			LabProSensor sensor = 
-				(LabProSensor)currentConfig.getSensorConfigs()[0];
+			SensorConfig sensor = currentConfig.getSensorConfigs()[0];
 			
-			int channelNumber = sensor.getChannelNumber();
+			int channelNumber = sensor.getPort();
 			// collected data from channel one using the 
 			// auto id operation
 			
-			protocol.channelSetup(channelNumber, 1);
+			if(sensor.getType() == SensorConfig.QUANTITY_RAW_VOLTAGE_1 ||
+					sensor.getType() == SensorConfig.QUANTITY_RAW_DATA_1){
+				// setup sensor to report 0-5V
+				// I have not found a way to access the raw data on the LabPro
+				// so 0-5 seems like the best default here.
+				protocol.channelSetup(channelNumber, 14);
+			} else if(sensor.getType() == SensorConfig.QUANTITY_RAW_VOLTAGE_2 ||
+					sensor.getType() == SensorConfig.QUANTITY_RAW_DATA_2){
+				// setup sensor to report +/-10V
+				protocol.channelSetup(channelNumber, 2);				
+			} else {
+				protocol.channelSetup(channelNumber, 1);
+			}
 			
 			// Turning on the power seems necessary before reading
 			// from the gomotion in real time.  It might also be

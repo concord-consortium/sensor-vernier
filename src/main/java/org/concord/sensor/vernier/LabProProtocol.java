@@ -63,6 +63,7 @@ public class LabProProtocol
 		 * only lists their resistance value not the id number.  So the 
 		 * resistance value is the number in the comment.
 		 */
+		public final static int NO_SENSOR_ID = 0;
 		public final static int THEROCOUPLE = 1;  // 2.2K
 		public final static int TI_VOLTAGE = 2;  // 33K
 		public final static int CURRENT = 3;  // 6.8K

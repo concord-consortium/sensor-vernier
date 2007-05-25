@@ -19,8 +19,6 @@ class LabProSensor extends SensorConfigImpl
      */
     private final LabProSensorDevice device;
 
-	private int channelNumber;
-    
 	/**
      * @param device
 	 * @param channelNumber 
@@ -29,7 +27,7 @@ class LabProSensor extends SensorConfigImpl
     		int channelNumber)
     {
         this.device = device;
-        this.channelNumber = channelNumber;
+        setPort(channelNumber);
     }
 
 	SensorCalibration calibrationEquation;
@@ -45,7 +43,7 @@ class LabProSensor extends SensorConfigImpl
 	 */
 	int translateSensor(int sensorId, SensorRequest request)
 	{
-		if(channelNumber > 10){
+		if(getPort() > 10){
 			
 			if(sensorId == 2) {
 				setConfirmed(true);
@@ -417,10 +415,5 @@ class LabProSensor extends SensorConfigImpl
 				0f,      // k0
 				67.69f   // k1
 				);
-
-	public int getChannelNumber()
-    {
-    	return channelNumber;
-    } 
 
 }
