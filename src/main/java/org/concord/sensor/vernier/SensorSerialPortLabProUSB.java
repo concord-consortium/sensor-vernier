@@ -63,7 +63,8 @@ public class SensorSerialPortLabProUSB implements SensorSerialPort
 	public void open(String portName) throws SerialException 
 	{
 		try {
-			System.loadLibrary("labprousb_wrapper");
+			System.loadLibrary("LabProUSB");
+			System.loadLibrary("labprousb_wrapper");			
 		} catch (UnsatisfiedLinkError e){
 			throw new SerialException("Can't load labprousb library", e);
 		}
