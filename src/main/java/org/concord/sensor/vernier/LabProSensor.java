@@ -41,7 +41,7 @@ class LabProSensor extends SensorConfigImpl
 	 * @param sensorId
 	 * @return
 	 */
-	int translateSensor(int sensorId, SensorRequest request)
+	int setupSensor(int sensorId, SensorRequest request)
 	{
 		if(getPort() > 10){
 			

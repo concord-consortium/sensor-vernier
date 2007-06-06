@@ -200,7 +200,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 					new LabProSensor(this, devService, channelNumber);
 				
 				// translate the vernier id to the SenorConfig id
-				sensorConfig.translateSensor(sensorId, null);
+				sensorConfig.setupSensor(sensorId, null);
 				sensorConfigVect.add(sensorConfig);
 			}
 		} catch (SerialException e) {
@@ -568,6 +568,11 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
     	return config;
 	}
 	
+	protected boolean hasNonAutoIdSensors() 
+	{
+		return true;
+	}
+	
 	protected SensorSerialPort getSensorSerialPort()
 	{
 		if("usb".equals(portName)){
@@ -595,7 +600,8 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			return true;
 		} catch (SerialException e) {
 			// The port could not be opened so lets move on to the rxtxPort
-			System.err.println("Can't open labpro usb");
+			System.err.println("Can't open LabPro USB");
+			System.err.println("  " + e.toString());
 		}
 
 		if(osSerialPort == null){
