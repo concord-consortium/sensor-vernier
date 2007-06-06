@@ -30,10 +30,14 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
     			38400, 8, 1, 0);
 	
     public final static int [] CHANNELS = {1,2,3,4,11,12};
+
+    public final static String ERR_DEVICE_NOT_ATTACHED = "LabPro is not attached";
     
 	protected final byte [] buf = new byte [1024];
 	
 	protected LabProProtocol protocol;
+	
+	protected String currentErrorMessage;
 	
     public LabProSensorDevice()
     {
@@ -200,8 +204,9 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 				sensorConfigVect.add(sensorConfig);
 			}
 		} catch (SerialException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			currentErrorMessage = ERR_DEVICE_NOT_ATTACHED;
+			System.err.println(e.toString());
+			return null;
 		}
 		
 		int numSensors = sensorConfigVect.size();
@@ -225,8 +230,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	 */
 	public String getErrorMessage(int error)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return currentErrorMessage;
 	}
 
 	float [] dataValues = new float[2];
@@ -559,4 +563,14 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
     	config.setPort(requestPort+1);
     	return config;
 	}
+	
+	protected SensorSerialPort getSensorSerialPort()
+	{
+		if("usb".equals(portName)){
+			return devService.getSerialPort(DeviceService.LABPROUSB_SERIAL_PORT, port);
+		}
+		
+		return super.getSensorSerialPort();
+	}
+
 }

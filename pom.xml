@@ -24,6 +24,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.concord.sensor</groupId>
+      <artifactId>labpro-usb</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.concord</groupId>
       <artifactId>framework</artifactId>
       <version>0.1.0-SNAPSHOT</version>
