@@ -57,7 +57,7 @@ public class SensorSerialPortLabProUSB implements SensorSerialPort
 	public boolean isOpen() 
 	{
 		short open = LabProUSB.isOpen();
-		return open != 0;
+		return open == 1;
 	}
 
 	public void open(String portName) throws SerialException 

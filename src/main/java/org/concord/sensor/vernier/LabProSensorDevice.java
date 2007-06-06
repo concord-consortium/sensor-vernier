@@ -234,6 +234,10 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	}
 
 	float [] dataValues = new float[2];
+
+	private SensorSerialPort usbSerialPort;
+
+	private SensorSerialPort osSerialPort;
 	
 	protected int streamRead(float[] values, int offset, int nextSampleOffset, 
 			DeviceReader reader, StreamingBuffer streamingBuffer)
@@ -573,4 +577,45 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		return super.getSensorSerialPort();
 	}
 
+	protected boolean openAutoPort()
+	{
+		// first try the usb port.
+		if(usbSerialPort == null){
+			usbSerialPort = devService.getSerialPort(DeviceService.LABPROUSB_SERIAL_PORT, usbSerialPort);
+		}
+		
+		// try opening the usb
+		try {
+			usbSerialPort.open(null);
+			if(port != usbSerialPort && port != null){
+				port.close();
+			}
+			port = usbSerialPort;
+			portName = "usb";
+			return true;
+		} catch (SerialException e) {
+			// The port could not be opened so lets move on to the rxtxPort
+			System.err.println("Can't open labpro usb");
+		}
+
+		if(osSerialPort == null){
+			osSerialPort = devService.getSerialPort(DeviceService.OS_SERIAL_PORT, osSerialPort);
+		}
+
+		if(port != osSerialPort && port != null){
+			try {
+				port.close();
+				port = osSerialPort;
+			} catch (SerialException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		// Do the default auto which asks the port for this ports availables ports and 
+		// checks if each one works.
+		return super.openAutoPort();		
+	}
+
+	
 }
