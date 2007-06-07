@@ -39,9 +39,6 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	
 	protected String currentErrorMessage;
 	
-	static {
-	}
-	
     public LabProSensorDevice()
     {
     	deviceLabel = "LP";
