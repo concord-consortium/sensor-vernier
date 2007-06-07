@@ -342,6 +342,13 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 			// send the reset
 			protocol.reset();
 						
+			// The port should be closed if it opens quickly, that way
+			// if the program crashes or another one is opened then will
+			// be less of a chance of conflict.
+			if(port.isOpenFast()){
+				port.close();
+			}
+			
 		} catch (SerialException e) {
 			e.printStackTrace();
 		}

@@ -9,6 +9,20 @@ public class SensorSerialPortLabProUSB implements SensorSerialPort
 {
 	byte [] tmpBuffer = new byte [2048];
 
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			@Override
+			public void run() {
+				System.err.println("Closing LabProUSB.  Its open state is: " +
+						LabProUSB.isOpen());
+				
+				// Make sure the labpro is closed
+				LabProUSB.close();
+			}
+		});
+	}
+	
+	
 	public void close() throws SerialException 
 	{
 		LabProUSB.close();
@@ -152,4 +166,12 @@ public class SensorSerialPortLabProUSB implements SensorSerialPort
 		}		
 	}
 
+	/**
+	 * This port can close and open quickly.
+	 * 
+	 */
+	public boolean isOpenFast() 
+	{
+		return true;
+	}
 }
