@@ -11,7 +11,6 @@ public class SensorSerialPortLabProUSB implements SensorSerialPort
 
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread(){
-			@Override
 			public void run() {
 				System.err.println("Closing LabProUSB.  Its open state is: " +
 						LabProUSB.isOpen());
