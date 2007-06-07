@@ -39,11 +39,24 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	
 	protected String currentErrorMessage;
 	
+	static {
+	}
+	
     public LabProSensorDevice()
     {
     	deviceLabel = "LP";
     	protocol = new LabProProtocol(this);
-    	
+
+    	Runtime.getRuntime().addShutdownHook(new Thread(){
+			public void run() {
+				System.err.println("Closing LabProSensorDevice.");
+				
+				// Try to make sure the labpro is closed
+				// If the usb is used and the program is closed while
+				// the labpro is still open.
+				close();
+			}
+		});    	
     }
     
 	/* (non-Javadoc)
