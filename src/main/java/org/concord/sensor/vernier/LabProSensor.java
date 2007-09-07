@@ -154,6 +154,15 @@ class LabProSensor extends SensorConfigImpl
 				// to the step size right now @see AbstractSensorDevice#scoreStepSize
 				setStepSize(0.02f);
 				break;			
+			case SENS_ID.CO2_GAS_LOW:
+				setUnit(new SensorUnit("ppm"));
+				setType(QUANTITY_CO2_GAS);
+				
+				// This is higher than the others
+				// but we are not currently paying attention to step size
+				// for co2 sensors @see AbstractSensorDevice#scoreStepSize				
+				setStepSize(4.0f);
+				break;			
 			default:
 				setType(QUANTITY_UNKNOWN);
 				break;				

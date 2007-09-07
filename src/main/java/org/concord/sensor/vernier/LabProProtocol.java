@@ -98,6 +98,7 @@ public class LabProProtocol
 		public final static int SALINITY = 61; 
 		public final static int GO_MOTION = 69; 
 		public final static int IR_TEMP = 73;
+		public final static int CO2_GAS_LOW = 75;
 
 	}
 	public final static boolean PRINT_SENDS = true;
