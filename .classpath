@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Sensor"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Framework"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sensor"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/framework"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/labpro-usb"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
