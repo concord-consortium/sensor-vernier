@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.concord</groupId>
+    <groupId>org.concord.project-groups</groupId>
     <artifactId>sensor</artifactId>
-    <version>1</version>
+    <version>2</version>
   </parent>
   
   <groupId>org.concord.sensor</groupId>
@@ -43,12 +43,7 @@
     </dependency>
   </dependencies>
 
-  <!--MVN_AUTO 
-    This comment and the elements below it are automatically 
-    generated any changes you make to these elements will be replaced if the pom is
-    regenerated. Do not edit this comment or the elements below it.-->
-
-  <!--this is required to find out parent pom you should-->
+  <!--this is required to find the parent pom -->
   <repositories>
     <repository>
       <id>cc-repo-internal</id>
