@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.concord.sensor.vernier;
+package org.concord.sensor.vernier.labpro;
 
 import java.util.StringTokenizer;
 
@@ -18,12 +18,15 @@ import org.concord.sensor.impl.ExperimentConfigImpl;
 import org.concord.sensor.impl.Vector;
 import org.concord.sensor.serial.SensorSerialPort;
 import org.concord.sensor.serial.SerialException;
+import org.concord.sensor.vernier.VernierSensor;
+import org.concord.sensor.vernier.VernierSensorDevice;
 
 /**
  * @author scott
  *
  */
 public class LabProSensorDevice extends AbstractStreamingSensorDevice
+	implements VernierSensorDevice
 {
     final static SerialPortParams serialPortParams = 
     	new SerialPortParams(SensorSerialPort.FLOWCONTROL_NONE,
@@ -49,8 +52,9 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 				System.err.println("Closing LabProSensorDevice.");
 				
 				// Try to make sure the labpro is closed
-				// If the usb is used and the program is closed while
-				// the labpro is still open.
+				// If this not done then it cause a bad crash.
+				// The crash happens when the usb is used and the program is closed while
+				// the labpro is still open, 
 				close();
 			}
 		});    	
@@ -144,14 +148,6 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		}
 	}
 	
-	/**
-	 * @see org.concord.sensor.device.SensorDevice#canDetectSensors()
-	 */
-	public boolean canDetectSensors()
-	{
-		return true;
-	}
-	
     /**
      * @see org.concord.sensor.device.SensorDevice#configure(org.concord.sensor.ExperimentRequest)
      */
@@ -206,8 +202,14 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 					continue;
 				}
 						
-				LabProSensor sensorConfig = 
-					new LabProSensor(this, devService, channelNumber);
+				int channelType = VernierSensor.CHANNEL_TYPE_ANALOG;
+				if(channelNumber > 10){
+					channelType = VernierSensor.CHANNEL_TYPE_DIGITAL;
+				}
+				
+				VernierSensor sensorConfig = 
+					new VernierSensor(this, devService, channelNumber,
+							channelType);
 				
 				// translate the vernier id to the SenorConfig id
 				sensorConfig.setupSensor(sensorId, null);
@@ -565,17 +567,6 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		return devService;
 	}
 	
-	/**
-	 * Increase the visibility of the log by overriding it here
-	 * that  
-	 * 
-	 * @see org.concord.sensor.device.impl.AbstractSensorDevice#log(java.lang.String)
-	 */
-	protected void log(String message)
-	{
-	    // TODO Auto-generated method stub
-	    super.log(message);
-	}
 
 	protected SensorConfig createSensorConfig(int type, int requestPort) 
 	{
@@ -583,11 +574,6 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
     	config.setType(type);
     	config.setPort(requestPort+1);
     	return config;
-	}
-	
-	protected boolean hasNonAutoIdSensors() 
-	{
-		return true;
 	}
 	
 	protected SensorSerialPort getSensorSerialPort()
@@ -640,5 +626,29 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		return super.openAutoPort();		
 	}
 
+	/**
+	 * Increase the visibility of the log by overriding it here
+	 * that  
+	 * 
+	 * @see org.concord.sensor.device.impl.AbstractSensorDevice#log(java.lang.String)
+	 */
+	public void log(String message)
+	{
+	    // TODO Auto-generated method stub
+	    super.log(message);
+	}
 	
+	protected boolean hasNonAutoIdSensors() 
+	{
+		return true;
+	}	
+
+	/**
+	 * @see org.concord.sensor.device.SensorDevice#canDetectSensors()
+	 */
+	public boolean canDetectSensors()
+	{
+		return true;
+	}
+
 }

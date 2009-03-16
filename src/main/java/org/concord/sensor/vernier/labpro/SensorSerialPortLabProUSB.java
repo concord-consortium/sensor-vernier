@@ -1,4 +1,4 @@
-package org.concord.sensor.vernier;
+package org.concord.sensor.vernier.labpro;
 
 import org.concord.sensor.impl.Vector;
 import org.concord.sensor.labprousb.LabProUSB;

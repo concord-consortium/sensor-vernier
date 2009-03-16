@@ -10,41 +10,76 @@ import org.concord.sensor.impl.LinearCalibration;
 import org.concord.sensor.impl.Range;
 import org.concord.sensor.impl.SensorCalibration;
 import org.concord.sensor.impl.SensorUnit;
-import org.concord.sensor.vernier.LabProProtocol.SENS_ID;
 
-class LabProSensor extends SensorConfigImpl
+public class VernierSensor extends SensorConfigImpl
 {
+	public final static int CHANNEL_TYPE_ANALOG = 0;
+	public final static int CHANNEL_TYPE_DIGITAL = 1;
+	
+	public final static int kProbeTypeNoProbe = 0;
+	public final static int kProbeTypeTime = 1;
+	public final static int kProbeTypeAnalog5V = 2;
+	public final static int kProbeTypeAnalog10V = 3;
+	public final static int kProbeTypeHeatPulser = 4;
+	public final static int kProbeTypeAnalogOut =5;
+	public final static int kProbeTypeMD = 6;
+	public final static int kProbeTypePhotoGate = 7;
+	public final static int kProbeTypeDigitalCount = 10;
+	public final static int kProbeTypeRotary = 11;
+	public final static int kProbeTypeDigitalOut = 12;
+	public final static int kProbeTypeLabquestAudio = 13;
+	
 	/**
      * 
      */
-    private final LabProSensorDevice device;
+    private final VernierSensorDevice device;
 
+	SensorCalibration calibrationEquation;
+
+	private int channelType;
+	
+	/**
+	 * This corresponds to the OperationType filed in the SensorDDSRec structure.
+	 * Its values are the constants starting with "kProbeType"
+	 * in the verniersensormap.xml file there is a "Type" attribute on each sensor
+	 * that defines this property.
+	 */
+	byte vernierProbeType = kProbeTypeAnalog5V;	
+	
 	/**
      * @param device
 	 * @param channelNumber 
      */
-    LabProSensor(LabProSensorDevice device, DeviceService devService, 
-    		int channelNumber)
+    public VernierSensor(VernierSensorDevice device, DeviceService devService, 
+    		int channelNumber, int channelType)
     {
         this.device = device;
         setPort(channelNumber);
+        this.channelType = channelType; 
     }
-
-	SensorCalibration calibrationEquation;
 
 	public void setCalibration(SensorCalibration calibration)
 	{
 		calibrationEquation = calibration;
 	}
 	   	
+	public SensorCalibration getCalibration()
+	{
+		return calibrationEquation;
+	}
+	
 	/**
 	 * @param sensorId
 	 * @return
 	 */
-	int setupSensor(int sensorId, SensorRequest request)
+	public int setupSensor(int sensorId, SensorRequest request)
 	{
-		if(getPort() > 10){
+		if(channelType == CHANNEL_TYPE_DIGITAL){
 			
+			// This is a trick to deal with old motion probes that have
+			// an id of 2 which is the same as the TI temp sensor, but
+			// we know it is a motion probe because it is connected to a 
+			// digital channel.
 			if(sensorId == 2) {
 				setConfirmed(true);
 
@@ -52,6 +87,7 @@ class LabProSensor extends SensorConfigImpl
 				setUnit(new SensorUnit("m"));
 				setType(QUANTITY_DISTANCE);
 
+				vernierProbeType = kProbeTypeMD;
 				setStepSize(0.01f);
 			}
 			
@@ -67,7 +103,7 @@ class LabProSensor extends SensorConfigImpl
 			Range valueRange = null;
 			
 			switch(sensorId){
-			case SENS_ID.BAROMETER:
+			case SensorID.BAROMETER:
 				setUnit(new SensorUnit("kPa"));
 				setType(QUANTITY_GAS_PRESSURE);
 
@@ -78,7 +114,7 @@ class LabProSensor extends SensorConfigImpl
 				valueRange = new Range(81.0f, 106.0f);
 				setValueRange(valueRange);
 				break;
-			case SENS_ID.GAS_PRESSURE:
+			case SensorID.GAS_PRESSURE:
 				setUnit(new SensorUnit("kPa"));
 				setType(QUANTITY_GAS_PRESSURE);
 
@@ -86,7 +122,7 @@ class LabProSensor extends SensorConfigImpl
 				// between barometer and regular pressure
 				setStepSize(0.05f); 
 				break;
-			case SENS_ID.DUAL_R_FORCE_10:
+			case SensorID.DUAL_R_FORCE_10:
 				setUnit(new SensorUnit("N"));
 				setType(QUANTITY_FORCE);
 				setStepSize(0.01f);
@@ -95,7 +131,7 @@ class LabProSensor extends SensorConfigImpl
 				setValueRange(valueRange);
 				break;
 
-			case SENS_ID.DUAL_R_FORCE_50:
+			case SensorID.DUAL_R_FORCE_50:
 				setUnit(new SensorUnit("N"));
 				setType(QUANTITY_FORCE);
 				setStepSize(0.05f);
@@ -103,9 +139,9 @@ class LabProSensor extends SensorConfigImpl
 				valueRange = new Range(-50f, 50f);
 				setValueRange(valueRange);
 				break;
-			case SENS_ID.SMART_LIGHT_1:
-			case SENS_ID.SMART_LIGHT_2:
-			case SENS_ID.SMART_LIGHT_3:
+			case SensorID.SMART_LIGHT_1:
+			case SensorID.SMART_LIGHT_2:
+			case SensorID.SMART_LIGHT_3:
 				setUnit(new SensorUnit("lx"));
 				setType(QUANTITY_LIGHT);
 				
@@ -113,19 +149,19 @@ class LabProSensor extends SensorConfigImpl
 				// malformed requests which claim to require small step sizes
 				setStepSize(0.01f);
 				break;				
-			case SENS_ID.GO_TEMP:
+			case SensorID.GO_TEMP:
 				setUnit(new SensorUnit("degC"));
 				setType(QUANTITY_TEMPERATURE_WAND);
 				
 				setStepSize(0.01f);
 				break;
-			case SENS_ID.GO_MOTION:
+			case SensorID.GO_MOTION:
 				setUnit(new SensorUnit("m"));
 				setType(QUANTITY_DISTANCE);
 
 				setStepSize(0.01f);
 				break;
-			case SENS_ID.SMART_HUMIDITY:
+			case SensorID.SMART_HUMIDITY:
 				setUnit(new SensorUnit("%RH"));
 				setType(QUANTITY_RELATIVE_HUMIDITY);
 				
@@ -134,18 +170,18 @@ class LabProSensor extends SensorConfigImpl
 				// for humidity sensors @see AbstractSensorDevice#scoreStepSize
 				setStepSize(0.1f);
 				break;
-			case SENS_ID.IR_TEMP:
+			case SensorID.IR_TEMP:
 				setUnit(new SensorUnit("degC"));
 				setType(QUANTITY_TEMPERATURE_WAND);
 
 				setStepSize(0.01f);
 				break;
-			case SENS_ID.PH:
+			case SensorID.PH:
 				setUnit(new SensorUnit("pH"));
 				setType(QUANTITY_PH);
 				setStepSize(0.0077f);
 				break;			
-			case SENS_ID.SALINITY:
+			case SensorID.SALINITY:
 				setUnit(new SensorUnit("ppt"));
 				setType(QUANTITY_SALINITY);
 				
@@ -154,7 +190,7 @@ class LabProSensor extends SensorConfigImpl
 				// to the step size right now @see AbstractSensorDevice#scoreStepSize
 				setStepSize(0.02f);
 				break;			
-			case SENS_ID.CO2_GAS_LOW:
+			case SensorID.CO2_GAS_LOW:
 				setUnit(new SensorUnit("ppm"));
 				setType(QUANTITY_CO2_GAS);
 				
@@ -175,7 +211,7 @@ class LabProSensor extends SensorConfigImpl
 			this.device.log("  current attached sensor: " + sensorId);
 
 			switch(sensorId){
-			case SENS_ID.TEMPERATURE_C:
+			case SensorID.TEMPERATURE_C:
 				setUnit(new SensorUnit("degC"));
 				setName("Temperature");
 				setType(QUANTITY_TEMPERATURE);			
@@ -185,7 +221,7 @@ class LabProSensor extends SensorConfigImpl
 				setStepSize(0.01f); 
 				setCalibration(temperatureCalibration);
 				break;
-			case SENS_ID.THEROCOUPLE:
+			case SensorID.THEROCOUPLE:
 				setUnit(new SensorUnit("degC"));
 				setName("Temperature");
 				setType(QUANTITY_TEMPERATURE);			
@@ -194,7 +230,7 @@ class LabProSensor extends SensorConfigImpl
 				setStepSize(0.01f); 
 				setCalibration(temperatureCalibration);
 				break;
-			case SENS_ID.LIGHT:
+			case SensorID.LIGHT:
 				setUnit(new SensorUnit("lux"));
 				setName("Illumaninace");
 				setType(QUANTITY_LIGHT);			
@@ -205,27 +241,27 @@ class LabProSensor extends SensorConfigImpl
 				setStepSize(2f);
 				setCalibration(lightCalibration);
 				break;			
-			case SENS_ID.TI_VOLTAGE:			
-			case SENS_ID.VOLTAGE:
-			case SENS_ID.CV_VOLTAGE:
+			case SensorID.TI_VOLTAGE:			
+			case SensorID.VOLTAGE:
+			case SensorID.CV_VOLTAGE:
 				setUnit(new SensorUnit("V"));
 				setName("Voltage");
 				setType(QUANTITY_VOLTAGE);
 
 				setStepSize(0.01f);
 				switch(sensorId){
-				case SENS_ID.TI_VOLTAGE:
+				case SensorID.TI_VOLTAGE:
 					setCalibration(tiVoltageCalibration);
 					break;		
-				case SENS_ID.VOLTAGE:
+				case SensorID.VOLTAGE:
 					setCalibration(rawVoltageCalibration);
 					break;
-				case SENS_ID.CV_VOLTAGE:
+				case SensorID.CV_VOLTAGE:
 					setCalibration(differentialVoltageCalibration);
 					break;
 				}
 				break;
-			case SENS_ID.CO2_GAS:
+			case SensorID.CO2_GAS:
 				setUnit(new SensorUnit("ppm"));
 				setName("CO2 Gas");
 				setType(QUANTITY_CO2_GAS);			
@@ -236,7 +272,7 @@ class LabProSensor extends SensorConfigImpl
 				setStepSize(4.0f);
 				setCalibration(co2GasCalibration);			
 				break;
-			case SENS_ID.OXYGEN_GAS:
+			case SensorID.OXYGEN_GAS:
 				setUnit(new SensorUnit("ppt"));
 				setName("Oxygen Gas");
 				setType(QUANTITY_OXYGEN_GAS);			
@@ -247,15 +283,15 @@ class LabProSensor extends SensorConfigImpl
 				setStepSize(0.1f); 
 				setCalibration(oxygenGasCalibration);			
 				break;
-			case SENS_ID.CURRENT:
-			case SENS_ID.RESISTANCE:
-			case SENS_ID.LONG_TEMP:
-			case SENS_ID.CO2:
-			case SENS_ID.OXYGEN:
-			case SENS_ID.CV_CURRENT:
-			case SENS_ID.TEMPERATURE_F:
-			case SENS_ID.HEART_RATE:
-			case SENS_ID.EKG:
+			case SensorID.CURRENT:
+			case SensorID.RESISTANCE:
+			case SensorID.LONG_TEMP:
+			case SensorID.CO2:
+			case SensorID.OXYGEN:
+			case SensorID.CV_CURRENT:
+			case SensorID.TEMPERATURE_F:
+			case SensorID.HEART_RATE:
+			case SensorID.EKG:
 				this.device.log("Sensor type is not supported yet: " + sensorId);
 				setType(QUANTITY_UNKNOWN);
 				break;
@@ -307,6 +343,11 @@ class LabProSensor extends SensorConfigImpl
 
 
 		return 0;
+	}
+	
+	public byte getVernierProbeType()
+	{
+		return vernierProbeType;
 	}
 	
 	/**
