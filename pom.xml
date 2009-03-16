@@ -28,6 +28,7 @@
       <artifactId>labpro-usb</artifactId>
       <version>0.1.0-SNAPSHOT</version>
       <scope>compile</scope>
+      <optional/>	
     </dependency>
     <dependency>
       <groupId>org.concord</groupId>
@@ -41,6 +42,12 @@
       <version>0.1.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
+	<dependency>
+	  <groupId>org.concord.sensor</groupId>
+  	  <artifactId>labquest-jna</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <optional/>	
+	</dependency>
   </dependencies>
 
   <build>
