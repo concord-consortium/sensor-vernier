@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sensor"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/framework"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/labpro-usb-osx"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/labquest-jna"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/labpro-usb"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
