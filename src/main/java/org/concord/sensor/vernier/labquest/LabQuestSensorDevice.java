@@ -190,12 +190,16 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 				mask = mask | (1 << channel);
 
 				VernierSensor vSensor = (VernierSensor) sensorConfig;
-				if(vSensor.getVernierProbeType() == VernierSensor.kProbeTypeMD){
+				switch(vSensor.getVernierProbeType()){
+				case VernierSensor.kProbeTypeMD:
 					labQuest.setSamplingMode((byte)channel, 
 							NGIOSourceCmds.SAMPLING_MODE_PERIODIC_MOTION_DETECT);
-					labQuest.setMeasurementPeriod((byte)channel, period);
-				}
-
+					break;
+				case VernierSensor.kProbeTypeAnalog10V:
+					labQuest.setAnalogInput((byte)channel, 
+							NGIOSourceCmds.ANALOG_INPUT_PM10V_BUILTIN_12BIT_ADC);
+					break;
+				}								
 			}
 
 			// need to set the channel mask based on the current configuration
@@ -248,7 +252,10 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 			for (int sensorIndex = 0; sensorIndex<sensors.length; sensorIndex++){
 				VernierSensor sensorConfig = (VernierSensor) sensors[sensorIndex];
 				int channel = sensorConfig.getPort();
-				if(sensorConfig.getVernierProbeType() == VernierSensor.kProbeTypeAnalog5V){
+				
+				int probeType = sensorConfig.getVernierProbeType(); 
+				if(probeType == VernierSensor.kProbeTypeAnalog5V ||
+						probeType == VernierSensor.kProbeTypeAnalog10V){
 					numMeasurements = labQuest.readRawMeasurementsAnalog((byte)channel, 
 							pMeasurementsBuf, minAvailable);
 					for(int i=0; i<numMeasurements; i++){
@@ -256,7 +263,7 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 						float calibratedData = Float.NaN;
 						if(sensorConfig.getCalibration() != null){
 							float voltage = labQuest.convertToVoltage((byte)channel, 
-									pMeasurementsBuf[i], GSensorDDSMem.kProbeTypeAnalog5V);
+									pMeasurementsBuf[i], probeType);
 							calibratedData = sensorConfig.getCalibration().calibrate(voltage);
 						} else {
 							calibratedData = labQuest.calibrateData2(
@@ -264,7 +271,7 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 						}
 						values[offset + sensorIndex + i*nextSampleOffset] = calibratedData;
 					}
-				} else if(sensorConfig.getVernierProbeType() == VernierSensor.kProbeTypeMD){
+				} else if(probeType == VernierSensor.kProbeTypeMD){
 					int numReadings = labQuest.readRawMeasurementsMotion((byte)channel, 
 							pMeasurementsBuf, pTimestampsBuf, minAvailable*2);
 

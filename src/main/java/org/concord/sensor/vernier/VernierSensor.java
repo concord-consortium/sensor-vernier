@@ -252,6 +252,7 @@ public class VernierSensor extends SensorConfigImpl
 				switch(sensorId){
 				case SensorID.TI_VOLTAGE:
 					setCalibration(tiVoltageCalibration);
+					vernierProbeType = kProbeTypeAnalog10V;
 					break;		
 				case SensorID.VOLTAGE:
 					setCalibration(rawVoltageCalibration);
