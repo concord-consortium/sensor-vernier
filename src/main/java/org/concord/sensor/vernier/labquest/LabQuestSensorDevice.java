@@ -252,18 +252,23 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 			for (int sensorIndex = 0; sensorIndex<sensors.length; sensorIndex++){
 				VernierSensor sensorConfig = (VernierSensor) sensors[sensorIndex];
 				int channel = sensorConfig.getPort();
+				int type = sensorConfig.getType();
 				
-				int probeType = sensorConfig.getVernierProbeType(); 
-				if(probeType == VernierSensor.kProbeTypeAnalog5V ||
-						probeType == VernierSensor.kProbeTypeAnalog10V){
+				int vernierProbeType = sensorConfig.getVernierProbeType(); 
+				if(vernierProbeType == VernierSensor.kProbeTypeAnalog5V ||
+						vernierProbeType == VernierSensor.kProbeTypeAnalog10V){
 					numMeasurements = labQuest.readRawMeasurementsAnalog((byte)channel, 
 							pMeasurementsBuf, minAvailable);
 					for(int i=0; i<numMeasurements; i++){
 
 						float calibratedData = Float.NaN;
-						if(sensorConfig.getCalibration() != null){
+						
+						if(type == SensorConfig.QUANTITY_RAW_DATA_1 ||
+								type == SensorConfig.QUANTITY_RAW_DATA_2){
+							calibratedData = pMeasurementsBuf[i];
+						} else if(sensorConfig.getCalibration() != null){
 							float voltage = labQuest.convertToVoltage((byte)channel, 
-									pMeasurementsBuf[i], probeType);
+									pMeasurementsBuf[i], vernierProbeType);
 							calibratedData = sensorConfig.getCalibration().calibrate(voltage);
 						} else {
 							calibratedData = labQuest.calibrateData2(
@@ -271,7 +276,7 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 						}
 						values[offset + sensorIndex + i*nextSampleOffset] = calibratedData;
 					}
-				} else if(probeType == VernierSensor.kProbeTypeMD){
+				} else if(vernierProbeType == VernierSensor.kProbeTypeMD){
 					int numReadings = labQuest.readRawMeasurementsMotion((byte)channel, 
 							pMeasurementsBuf, pTimestampsBuf, minAvailable*2);
 
@@ -373,6 +378,27 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 	public void log(String message)
 	{
 	    super.log(message);
+	}
+
+	protected SensorConfig createSensorConfig(int type, int requestPort) 
+	{
+		VernierSensor config = 
+			new VernierSensor(LabQuestSensorDevice.this, devService, requestPort+1,
+					VernierSensor.CHANNEL_TYPE_ANALOG);
+    	config.setType(type);
+		if(type == SensorConfig.QUANTITY_RAW_VOLTAGE_1 ||
+				type == SensorConfig.QUANTITY_RAW_DATA_1){
+			// setup sensor to report 0-5V
+			config.setVernierProbeType(VernierSensor.kProbeTypeAnalog5V);
+			config.setCalibration(config.rawVoltageCalibration);
+		} else if(type == SensorConfig.QUANTITY_RAW_VOLTAGE_2 ||
+				type == SensorConfig.QUANTITY_RAW_DATA_2){
+			// setup sensor to report +/-10V
+			config.setVernierProbeType(VernierSensor.kProbeTypeAnalog10V);			
+			config.setCalibration(config.rawVoltageCalibration);
+		}
+
+    	return config;
 	}
 
 	private void closeAfterException(LabQuestException e) {

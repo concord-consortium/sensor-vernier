@@ -16,18 +16,18 @@ public class VernierSensor extends SensorConfigImpl
 	public final static int CHANNEL_TYPE_ANALOG = 0;
 	public final static int CHANNEL_TYPE_DIGITAL = 1;
 	
-	public final static int kProbeTypeNoProbe = 0;
-	public final static int kProbeTypeTime = 1;
-	public final static int kProbeTypeAnalog5V = 2;
-	public final static int kProbeTypeAnalog10V = 3;
-	public final static int kProbeTypeHeatPulser = 4;
-	public final static int kProbeTypeAnalogOut =5;
-	public final static int kProbeTypeMD = 6;
-	public final static int kProbeTypePhotoGate = 7;
-	public final static int kProbeTypeDigitalCount = 10;
-	public final static int kProbeTypeRotary = 11;
-	public final static int kProbeTypeDigitalOut = 12;
-	public final static int kProbeTypeLabquestAudio = 13;
+	public final static byte kProbeTypeNoProbe = 0;
+	public final static byte kProbeTypeTime = 1;
+	public final static byte kProbeTypeAnalog5V = 2;
+	public final static byte kProbeTypeAnalog10V = 3;
+	public final static byte kProbeTypeHeatPulser = 4;
+	public final static byte kProbeTypeAnalogOut =5;
+	public final static byte kProbeTypeMD = 6;
+	public final static byte kProbeTypePhotoGate = 7;
+	public final static byte kProbeTypeDigitalCount = 10;
+	public final static byte kProbeTypeRotary = 11;
+	public final static byte kProbeTypeDigitalOut = 12;
+	public final static byte kProbeTypeLabquestAudio = 13;
 	
 	/**
      * 
@@ -76,10 +76,7 @@ public class VernierSensor extends SensorConfigImpl
 	{
 		if(channelType == CHANNEL_TYPE_DIGITAL){
 			
-			// This is a trick to deal with old motion probes that have
-			// an id of 2 which is the same as the TI temp sensor, but
-			// we know it is a motion probe because it is connected to a 
-			// digital channel.
+			// This is a motion sensor
 			if(sensorId == 2) {
 				setConfirmed(true);
 
@@ -351,6 +348,10 @@ public class VernierSensor extends SensorConfigImpl
 		return vernierProbeType;
 	}
 	
+	public void setVernierProbeType(byte type) {
+		vernierProbeType = type;
+	}
+
 	/**
 	 * Special calibration function for simply return the data which is 
 	 * passed in
