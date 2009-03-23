@@ -1,5 +1,11 @@
 package org.concord.sensor.vernier.labpro;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 import org.concord.sensor.impl.Vector;
 import org.concord.sensor.labprousb.LabProUSB;
 import org.concord.sensor.serial.SensorSerialPort;
@@ -75,10 +81,59 @@ public class SensorSerialPortLabProUSB implements SensorSerialPort
 
 	public void open(String portName) throws SerialException 
 	{
+		boolean hasNewVernierDeviceDriver = false;
+		if(System.getProperty("os.name").toLowerCase().startsWith("windows")){
+			// check if the new labpro device driver is installed
+			String windir = System.getenv("windir");
+			if(windir != null){
+				File newLabProFile = new File(windir + "\\system32\\LabProCo.dll");
+				if(newLabProFile.exists()){
+					// this computer has the new device driver.
+					hasNewVernierDeviceDriver = true;
+					System.out.println("Found new vernier device driver");
+				}
+			}
+		}
+				
 		try {
-			System.loadLibrary("LabProUSB");
+			if(hasNewVernierDeviceDriver){
+				System.loadLibrary("LabProUSB");
+			} else {
+				// extract the old driver and do a System.load with that.
+				URL labProDLL2Resource = LabProUSB.class.getResource("LabProUSB-2.dll");
+				try {
+					File tempFile = File.createTempFile("testFile", null);
+					File tempDir = tempFile.getParentFile();					
+					tempFile.delete();
+					File ccSensorLabProDir = new File(tempDir, "cc-sens-labpro");
+					if(!ccSensorLabProDir.isDirectory()){
+						ccSensorLabProDir.mkdirs();
+					} 
+					File dllFile = new File(ccSensorLabProDir, "LabProUSB.dll");
+					if(dllFile.exists()){
+						dllFile.delete();
+					}
+					dllFile.createNewFile();
+					FileOutputStream fileOutputStream = new FileOutputStream(dllFile);
+					InputStream openStream = labProDLL2Resource.openStream();
+					byte [] buffer= new byte[1024];
+					while(true){
+						int numRead = openStream.read(buffer);
+						if(numRead < 0){
+							break;
+						}
+						fileOutputStream.write(buffer, 0, numRead);						
+					}
+					fileOutputStream.close();
+					System.load(dllFile.getAbsolutePath());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			System.loadLibrary("labprousb_wrapper");			
 		} catch (UnsatisfiedLinkError e){
+			e.printStackTrace();
 			throw new SerialException("Can't load labprousb library", e);
 		}
 		
