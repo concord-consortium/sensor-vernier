@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.concord.project-groups</groupId>
     <artifactId>sensor</artifactId>
-    <version>2</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
   
   <groupId>org.concord.sensor</groupId>
@@ -20,32 +20,27 @@
     <dependency>
       <groupId>org.concord</groupId>
       <artifactId>sensor</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.concord.sensor</groupId>
       <artifactId>labpro-usb</artifactId>
-      <version>0.2.0-SNAPSHOT</version>
       <scope>compile</scope>
       <optional/>	
     </dependency>
     <dependency>
       <groupId>org.concord</groupId>
       <artifactId>framework</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.concord</groupId>
       <artifactId>data</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
 	<dependency>
 	  <groupId>org.concord.sensor</groupId>
   	  <artifactId>labquest-jna</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
       <optional/>	
 	</dependency>
   </dependencies>
