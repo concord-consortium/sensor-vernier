@@ -195,7 +195,17 @@ public class VernierSensor extends SensorConfigImpl
 				// but we are not currently paying attention to step size
 				// for co2 sensors @see AbstractSensorDevice#scoreStepSize				
 				setStepSize(4.0f);
-				break;			
+				break;
+			case SensorID.COLORIMETER:
+				setUnit(new SensorUnit("%T"));
+				setType(QUANTITY_COLORIMETER);
+				setStepSize(0.057f);
+				break;
+			case SensorID.HAND_DYNAMOMETER:
+				setUnit(new SensorUnit("N"));
+				setType(QUANTITY_HAND_DYNAMOMETER);
+				setStepSize(0.35f);
+				break;
 			default:
 				setType(QUANTITY_UNKNOWN);
 				break;				

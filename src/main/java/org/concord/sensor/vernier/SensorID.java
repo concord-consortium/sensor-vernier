@@ -33,18 +33,31 @@ public final class SensorID{
 	 * smart sensors
 	 */
 	public final static int PH = 20;
+	public final static int CONDUCTIVITY_200  = 21; 
+	public final static int CONDUCTIVITY_2000 = 22;
+	public final static int CONDUCTIVITY_20000 = 23; 
 	public final static int GAS_PRESSURE = 24;
 	public final static int DUAL_R_FORCE_10 = 25;
 	public final static int DUAL_R_FORCE_50 = 26;
+	public final static int _25G_ACCEL = 27; 
+	public final static int LOWG_ACCEL = 28; 
 	public final static int SMART_LIGHT_1 = 34;
 	public final static int SMART_LIGHT_2 = 35;
 	public final static int SMART_LIGHT_3 = 36;
+	public final static int DISSOLVED_OXYGEN = 37;
+	public final static int MAGNETIC_FIELD_HIGH = 44; 
+	public final static int MAGNETIC_FIELD_LOW = 45;
 	public final static int BAROMETER = 46;
 	public final static int SMART_HUMIDITY = 47;
+	public final static int COLORIMETER = 54;
 	public final static int GO_TEMP = 60;
 	public final static int SALINITY = 61; 
+	public final static int BLOOD_PRESSURE = 66;
+	public final static int HAND_DYNAMOMETER = 67;
+	public final static int SPIROMETER = 68; 
 	public final static int GO_MOTION = 69; 
 	public final static int IR_TEMP = 73;
+	public final static int SOUND_LEVEL = 74; 
 	public final static int CO2_GAS_LOW = 75;
 
 }
