@@ -416,4 +416,14 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 			}
 		}
 	}
+	
+	public String getVendorName()
+	{
+		return "Vernier";		
+	}
+	
+	public String getDeviceName()
+	{
+		return "LabQuest";
+	}
 }

@@ -654,5 +654,14 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	{
 		return true;
 	}
+	
+	public String getVendorName() 
+	{
+		return "Vernier";
+	}
 
+	public String getDeviceName() 
+	{
+		return "LabPro";
+	}
 }
