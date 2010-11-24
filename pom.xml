@@ -43,6 +43,12 @@
   	  <artifactId>labquest-jna</artifactId>
       <optional/>	
 	</dependency>
+	<dependency>
+		<groupId>org.concord.external.jna</groupId>
+		<artifactId>jna</artifactId>
+		<version>3.0.9</version>
+		<scope>test</scope>
+	</dependency>
   </dependencies>
 
   <build>
@@ -53,6 +59,15 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- don't run any of the tests automatically because they require the correct hardware to be attached -->
+            <exclude>org/concord/sensor/vernier/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
 	</plugins>
