@@ -1,5 +1,6 @@
 package org.concord.sensor.vernier.labquest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.concord.sensor.ExperimentConfig;
@@ -28,11 +29,23 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 	long [] pTimestampsBuf = new long [1000];
 	private float lastMDValue = 0;
 	
+	private String errorMessage = null;
+	
 	public LabQuestSensorDevice() {
     	deviceLabel = "LQ";
     	
     	labQuestLibrary = new LabQuestLibrary();
-    	labQuestLibrary.init();
+    	try {
+			labQuestLibrary.init();
+		} catch (IOException e) {
+			errorMessage = "Unable to initialize native library";
+			labQuestLibrary = null;
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			errorMessage = "Unable to initialize native library";
+			labQuestLibrary = null;
+			e.printStackTrace();
+		}
 		
     	Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run() {
@@ -60,6 +73,10 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 	 */
 	@Override
 	public void open(String portParams) {
+		if(labQuestLibrary == null){
+			return;
+		}
+		
 		try {
 			String firstDeviceName = labQuestLibrary.getFirstDeviceName();
 			if(firstDeviceName == null){
@@ -171,6 +188,9 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 	}
 
 	public String getErrorMessage(int error) {
+		if(errorMessage != null){
+			return errorMessage;
+		}
 		return "Unknown LabQuest Error";
 	}
 
