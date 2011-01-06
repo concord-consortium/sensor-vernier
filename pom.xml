@@ -49,6 +49,14 @@
 		<version>3.0.9</version>
 		<scope>test</scope>
 	</dependency>
+    <dependency>
+      <groupId>org.concord</groupId>
+      <artifactId>sensor</artifactId>
+      <type>test-jar</type>
+      <!--  this is a bit of a hack for now this should be put in the dependencyManagement section instead -->
+      <version>0.2.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
