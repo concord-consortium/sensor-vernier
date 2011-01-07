@@ -314,6 +314,8 @@ public class VernierSensor extends SensorConfigImpl
 		} else {
 			// These are for sensors we can't auto id.
 			// They will not work in the current design
+			// FIXME this code doesn't interact correctly with the AbstractSensorDevice autoid code
+			//   it is never called with a non null request the code below will never be executed.
 			
 			setConfirmed(false);
 			
@@ -323,7 +325,7 @@ public class VernierSensor extends SensorConfigImpl
 			// we are going to have problems.  The api breaks
 			// down here.  Lets cross our fingers and hope we don't
 			// have to deal with that.
-			if(request != null) {
+			if(request == null) {
 				// we need a request to determine what calibration
 				// to use.
 				return 0;
