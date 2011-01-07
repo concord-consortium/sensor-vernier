@@ -43,6 +43,12 @@
   	  <artifactId>labquest-jna</artifactId>
       <optional/>	
 	</dependency>
+    <dependency>
+      <groupId>org.concord.sensor</groupId>
+      <artifactId>goio-jna</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <optional />
+    </dependency>
 	<dependency>
 		<groupId>org.concord.external.jna</groupId>
 		<artifactId>jna</artifactId>
