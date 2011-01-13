@@ -12,22 +12,24 @@ import org.concord.sensor.impl.ExperimentConfigImpl;
 import org.concord.sensor.vernier.VernierSensor;
 import org.concord.sensor.vernier.VernierSensorDevice;
 
-//JVDH API
-//     Start here, look at LabQuestSensorDevice.java
-//     and                 VernierSensor, SensorID
 public class GoIOSensorDevice extends AbstractSensorDevice implements
 		VernierSensorDevice 
 {
 	GoIOLibrary goio;
-	private String errorMessage;
-	private GoIOSensor currentGoDevice;
+	String errorMessage;
+	GoIOSensor currentGoDevice;
 		
 	public GoIOSensorDevice() {
     	deviceLabel = "GIO";
     	goio = new GoIOLibrary();
     	
-    	// TODO add some exception handling here for when the native library can't be loaded
-    	goio.initLibrary();
+    	try {
+    		goio.initLibrary();
+    	} catch (Throwable t) {
+    		errorMessage = "Can't load goio native library";
+    		goio = null;
+    		t.printStackTrace();
+    	}
 	}
 	
 	@Override
@@ -80,7 +82,6 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 			return;
 		}
 
-		// TODO if we have open sensor handles we need to close them
 		if(currentGoDevice != null){
 			currentGoDevice.close();
 			currentGoDevice = null;
@@ -97,29 +98,44 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 
 	@Override
 	protected boolean hasNonAutoIdSensors() {
-		// FIXME they are non autoid sensors that can be used with the golink
+		// FIXME there are non autoid sensors that can be used with the golink
 		//   and old projects used them.  However the current AbstractSensorDevice code doesn't
 		//   handle this case particularly well, so for now we will return false here
 		return false;
 	}
 	
 	public ExperimentConfig configure(ExperimentRequest request) {
-		return autoIdConfigure(request);
+		// FIXME this should reject raw* requests if that don't work with the attached device
+		//   for example raw_*2 shouldn't work with the goTemp or goMotion 
+
+		ExperimentConfig experimentConfig = autoIdConfigure(request);
+		
+		// Because the supported measurement period by the device 
+		// might be different than the requested period the measurement period is set
+		// on the device here
+		currentGoDevice.setMeasurementPeriod(experimentConfig.getPeriod());
+		((ExperimentConfigImpl)experimentConfig).setPeriod((float) currentGoDevice.getMeasurementPeriod());
+
+		
+		return experimentConfig;
 	}
 
 	public ExperimentConfig getCurrentConfig() {
-		if(currentGoDevice == null){
-			currentGoDevice = openGoDevice();
+		if(currentGoDevice != null){
+			currentGoDevice.close();
+			currentGoDevice = null;
 		}
+		
+		currentGoDevice = openGoDevice();
 
 		if(currentGoDevice == null) {
-			// FIXME this should probably return something else
+			// Currently the only way to indicate errors in loading the library or opening the device
+			// is to return null here.  In that case getErrorMessage is called. 
 			return null;
 		}
 
 		ExperimentConfigImpl expConfig = new ExperimentConfigImpl();
 		
-		// FIXME this should use the device name based on what is attached 
 		expConfig.setDeviceName(currentGoDevice.getDeviceLabel());
 
 		expConfig.setExactPeriod(true);
@@ -144,9 +160,17 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 	}
 
 	protected GoIOSensor openGoDevice() {
+		if(goio == null){
+			return null;
+		}
 		GoIOSensor gSensor = goio.getFirstSensor(); 
 		
 		if(gSensor == null){
+			// Set the error message here because returning null here
+			// ought to trigger an error printout, however if isAttached was called
+			// first then this shouldn't happen because that ought to return false
+			// in this case
+			errorMessage = "Cannot find an attached Go IO device";
 			return null;			
 		}
 		
@@ -154,6 +178,7 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 		// In the sensor-native code we then unlock it.  It isn't clear why, 
 		// perhaps so any thread can access it.  A more safe approach would be to use
 		// the a single thread delegator to force all access on one thread.
+		// or to synchronize the access to the gSensor and have it lock it and unlock it 
 		gSensor.open();
 		
 		return gSensor;
@@ -172,28 +197,93 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 	}
 
 	public String getDeviceName() {
-		// TODO this should change after the device is detected to represent the actual device
+		if(currentGoDevice != null){
+			return currentGoDevice.getDeviceLabel();
+		}
+		
 		return "GoIO";
 	}
 
-	public int read(float[] values, int offset, int nextSampleOffset,
-			DeviceReader reader) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public boolean start() {
-		// TODO Auto-generated method stub
-		return false;
+		currentGoDevice.clearIO();
+		
+		// check if a raw_*_2 sensor type was requested
+		// that should select the 10V channel on the go link
+		SensorConfig[] sensorConfigs = currentConfig.getSensorConfigs();
+		if(sensorConfigs != null && sensorConfigs.length > 0){
+			if(((VernierSensor)sensorConfigs[0]).getVernierProbeType() ==
+				VernierSensor.kProbeTypeAnalog10V){
+				currentGoDevice.setAnalogInputChannel(GoIOSensor.ANALOG_CHANNEL_10V);
+			}
+		}
+		
+		currentGoDevice.startMeasurements();		
+		return true;
 	}
 
 	public void stop(boolean wasRunning) {
-		// TODO Auto-generated method stub
-
+		currentGoDevice.stopMeasurements();
 	}
 
 	@Override
 	public boolean isAttached() {
+		if(goio == null){
+			return false;
+		}
 		return goio.isGoDeviceAttached();
+	}
+
+	@Override
+	protected SensorConfig createSensorConfig(int type, int requestPort) 
+	{
+		VernierSensor config = 
+			new VernierSensor(this, devService, 0,
+					VernierSensor.CHANNEL_TYPE_ANALOG);
+    	config.setType(type);
+    	return config;
+	}
+
+	int [] rawBuffer = new int [200];
+
+	public int read(float[] values, int offset, int nextSampleOffset,
+			DeviceReader reader) {
+		int numMeasurements = currentGoDevice.readRawMeasurements(rawBuffer);
+		if(numMeasurements < 0){
+			errorMessage = "error reading measurements";
+			return -1;
+		}
+
+		SensorConfig [] sensors = currentConfig.getSensorConfigs();
+		VernierSensor sensorConfig = (VernierSensor) sensors[0];
+		int type = sensorConfig.getType();
+
+		// To support multiple devices this should be in a loop over the 
+		// devices and sensorIndex should be incremented
+		int sensorIndex = 0;
+
+		for(int i=0; i<numMeasurements; i++){
+
+			float calibratedData = Float.NaN;
+
+			if(type == SensorConfig.QUANTITY_RAW_DATA_1 ||
+					type == SensorConfig.QUANTITY_RAW_DATA_2){
+				calibratedData = rawBuffer[i];
+			} else {
+				// convert to voltage
+				float voltage = (float) currentGoDevice.convertToVoltage(rawBuffer[i]);
+
+				// scytacki: I would think the GoIO sdk would automatically handle calibration for autoid non smart sensors
+				//   but it doesn't.  Instead we use the calibration code that is in VernierSensor class.
+				if(sensorConfig.getCalibration() != null){
+					calibratedData = sensorConfig.getCalibration().calibrate(voltage);
+				} else {
+					// ask goio sdk to convert value
+					calibratedData = (float) currentGoDevice.calibrateData(voltage);
+				}
+			}
+			values[offset + sensorIndex + i*nextSampleOffset] = calibratedData;
+		}
+
+		return numMeasurements;
 	}
 }
