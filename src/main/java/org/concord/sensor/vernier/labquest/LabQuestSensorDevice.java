@@ -406,18 +406,6 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 			new VernierSensor(LabQuestSensorDevice.this, devService, requestPort+1,
 					VernierSensor.CHANNEL_TYPE_ANALOG);
     	config.setType(type);
-		if(type == SensorConfig.QUANTITY_RAW_VOLTAGE_1 ||
-				type == SensorConfig.QUANTITY_RAW_DATA_1){
-			// setup sensor to report 0-5V
-			config.setVernierProbeType(VernierSensor.kProbeTypeAnalog5V);
-			config.setCalibration(config.rawVoltageCalibration);
-		} else if(type == SensorConfig.QUANTITY_RAW_VOLTAGE_2 ||
-				type == SensorConfig.QUANTITY_RAW_DATA_2){
-			// setup sensor to report +/-10V
-			config.setVernierProbeType(VernierSensor.kProbeTypeAnalog10V);			
-			config.setCalibration(config.rawVoltageCalibration);
-		}
-
     	return config;
 	}
 

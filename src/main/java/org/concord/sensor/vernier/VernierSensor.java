@@ -364,6 +364,22 @@ public class VernierSensor extends SensorConfigImpl
 		vernierProbeType = type;
 	}
 
+	@Override
+	public void setType(int type){
+		super.setType(type);
+		if(type == QUANTITY_RAW_VOLTAGE_1 ||
+				type == QUANTITY_RAW_DATA_1){
+			// setup sensor to report 0-5V
+			setVernierProbeType(kProbeTypeAnalog5V);
+			setCalibration(rawVoltageCalibration);
+		} else if(type == QUANTITY_RAW_VOLTAGE_2 ||
+				type == QUANTITY_RAW_DATA_2){
+			// setup sensor to report +/-10V
+			setVernierProbeType(kProbeTypeAnalog10V);			
+			setCalibration(rawVoltageCalibration);
+		}
+	}
+	
 	/**
 	 * Special calibration function for simply return the data which is 
 	 * passed in
