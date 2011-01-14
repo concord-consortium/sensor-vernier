@@ -142,6 +142,9 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 		expConfig.setPeriod((float)currentGoDevice.getMeasurementPeriod());
 		expConfig.setDataReadPeriod(expConfig.getPeriod());
 
+		// TODO we should set the period range since it is known by the device
+		//   expConfig.getPeriodRange();
+		
 		SensorConfig [] sensorConfigs = new SensorConfig[1];
 		expConfig.setSensorConfigs(sensorConfigs);
 
@@ -151,6 +154,8 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 		}
 		VernierSensor sensor = new VernierSensor(this, devService, 0, channelType);
 
+		// FIXME if the sensor isn't a known sensor then sensorConfig should return
+		// an unknown type of sensor.  It isn't clear if this should return a valid experiment config or not.
 		sensor.setupSensor(currentGoDevice.getAttachedSensorId(), null);
 		sensorConfigs[0] = sensor;
 		

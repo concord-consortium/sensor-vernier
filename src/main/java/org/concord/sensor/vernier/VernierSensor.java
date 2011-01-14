@@ -76,8 +76,8 @@ public class VernierSensor extends SensorConfigImpl
 	{
 		if(channelType == CHANNEL_TYPE_DIGITAL){
 			
-			// This is a motion sensor
-			if(sensorId == 2) {
+			// This is a motion sensor or a GoMotion
+			if(sensorId == 2 || sensorId == 69) {
 				setConfirmed(true);
 
 				// it is digital sensor
