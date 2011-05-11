@@ -291,6 +291,16 @@ public class VernierSensor extends SensorConfigImpl
 				setStepSize(0.1f); 
 				setCalibration(oxygenGasCalibration);			
 				break;
+			case SensorID.EKG:
+				setUnit(new SensorUnit("v"));
+				setName("EKG");
+				setType(QUANTITY_EKG);
+				setStepSize(0.002f); // FIXME: this is a hack we should be able calc this
+
+				// the ekg sensor just returns voltage and the software has to convert 
+				// it to a heart rate					
+				setCalibration(rawVoltageCalibration);
+				break;
 			case SensorID.CURRENT:
 			case SensorID.RESISTANCE:
 			case SensorID.LONG_TEMP:
@@ -299,7 +309,6 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.CV_CURRENT:
 			case SensorID.TEMPERATURE_F:
 			case SensorID.HEART_RATE:
-			case SensorID.EKG:
 				this.device.log("Sensor type is not supported yet: " + sensorId);
 				setType(QUANTITY_UNKNOWN);
 				break;
