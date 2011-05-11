@@ -292,12 +292,12 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(oxygenGasCalibration);			
 				break;
 			case SensorID.EKG:
-				setUnit(new SensorUnit("v"));
+				setUnit(new SensorUnit("mV"));
 				setName("EKG");
 				setType(QUANTITY_EKG);
 				setStepSize(0.002f); // FIXME: this is a hack we should be able calc this
 
-				// the ekg sensor just returns voltage and the software has to convert 
+				// the ekg sensor just returns mV and the software has to convert 
 				// it to a heart rate					
 				setCalibration(rawVoltageCalibration);
 				break;
