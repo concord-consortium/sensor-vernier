@@ -145,7 +145,15 @@ public class VernierSensor extends SensorConfigImpl
 				// we keep this artificially low so we don't restrict 
 				// malformed requests which claim to require small step sizes
 				setStepSize(0.01f);
-				break;				
+				break;
+			case SensorID.MAGNETIC_FIELD_HIGH:
+			case SensorID.MAGNETIC_FIELD_LOW:
+				setUnit(new SensorUnit("G"));
+				setType(QUANTITY_MAGNETIC_FIELD);
+
+				// FIXME this should be different for the different sensors. 
+				setStepSize(0.0032f);
+				break;
 			case SensorID.GO_TEMP:
 				setUnit(new SensorUnit("degC"));
 				setType(QUANTITY_TEMPERATURE_WAND);
@@ -177,7 +185,19 @@ public class VernierSensor extends SensorConfigImpl
 				setUnit(new SensorUnit("pH"));
 				setType(QUANTITY_PH);
 				setStepSize(0.0077f);
-				break;			
+				break;	
+			case SensorID.UVA_INTENSITY:
+				setUnit(new SensorUnit("mW/m^2"));
+				setType(QUANTITY_UVA_INTENSITY);
+				setStepSize(5f);
+				setValueRange(new Range(0f, 20000f));
+				break;
+			case SensorID.UVB_INTENSITY:
+				setUnit(new SensorUnit("mW/m^2"));
+				setType(QUANTITY_UVB_INTENSITY);
+				setStepSize(0.25f);
+				setValueRange(new Range(0f, 1000f));				
+				break;
 			case SensorID.SALINITY:
 				setUnit(new SensorUnit("ppt"));
 				setType(QUANTITY_SALINITY);
@@ -206,12 +226,20 @@ public class VernierSensor extends SensorConfigImpl
 				setType(QUANTITY_HAND_DYNAMOMETER);
 				setStepSize(0.35f);
 				break;
+			case SensorID.HIGH_CURRENT:
+				setUnit(new SensorUnit("A"));
+				setType(QUANTITY_CURRENT);
+				setStepSize(0.005f); // 4.9 mA
+				setValueRange(new Range(-10f,10f));
+				break;
 			default:
 				setType(QUANTITY_UNKNOWN);
 				break;				
 			}	
 
 		} else if(sensorId != 0) {
+			// These are the "not smart" sensors.  They have an id, but they don't store the calibration on the
+			// device.  
 			setConfirmed(true);
 
 			// do a lookup from our list of known sensors and calibrations
@@ -301,12 +329,21 @@ public class VernierSensor extends SensorConfigImpl
 				// it to a heart rate					
 				setCalibration(rawVoltageCalibration);
 				break;
+			case SensorID.CV_CURRENT:
+				setUnit(new SensorUnit("A"));
+				setType(QUANTITY_CURRENT);
+				setStepSize(0.0003f); // this is assuming 12bit resolution which is on GoLink, LabPro, LabQuest: 0.31 mA 
+				setValueRange(new Range(-0.6f, 0.6f));
+				setCalibration(new LinearCalibration(
+						0.625f,  // k0
+						-0.25f   // k1
+						));
+				break;
 			case SensorID.CURRENT:
 			case SensorID.RESISTANCE:
 			case SensorID.LONG_TEMP:
 			case SensorID.CO2:
 			case SensorID.OXYGEN:
-			case SensorID.CV_CURRENT:
 			case SensorID.TEMPERATURE_F:
 			case SensorID.HEART_RATE:
 				this.device.log("Sensor type is not supported yet: " + sensorId);
