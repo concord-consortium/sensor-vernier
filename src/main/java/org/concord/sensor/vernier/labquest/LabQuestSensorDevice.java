@@ -142,14 +142,7 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 				if(sensorId <= 0){
 					continue;
 				}
-
-				GSensorDDSMem sensorDDSMem = null;
-				if(sensorId >= 20){
-					labQuest.ddsMemReadRecord(NGIOSourceCmds.CHANNEL_ID_ANALOG1, false);
-					sensorDDSMem = labQuest.ddsMemGetRecord(NGIOSourceCmds.CHANNEL_ID_ANALOG1);
-				}
-
-
+				
 				int channelType = VernierSensor.CHANNEL_TYPE_ANALOG;
 				if(i >= 5){
 					channelType = VernierSensor.CHANNEL_TYPE_DIGITAL;
