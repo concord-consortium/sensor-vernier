@@ -10,7 +10,6 @@ import org.concord.sensor.device.DeviceReader;
 import org.concord.sensor.device.impl.AbstractSensorDevice;
 import org.concord.sensor.device.impl.SerialPortParams;
 import org.concord.sensor.impl.ExperimentConfigImpl;
-import org.concord.sensor.labquest.jna.GSensorDDSMem;
 import org.concord.sensor.labquest.jna.LabQuest;
 import org.concord.sensor.labquest.jna.LabQuestException;
 import org.concord.sensor.labquest.jna.LabQuestLibrary;
@@ -122,6 +121,10 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 		return labQuest != null;
 	}
 	
+	public LabQuest getCurrentLabQuest() {
+		return labQuest;
+	}
+
 	public ExperimentConfig getCurrentConfig() {
 		ExperimentConfigImpl expConfig = new ExperimentConfigImpl();
 		expConfig.setDeviceName("LabQuest");
