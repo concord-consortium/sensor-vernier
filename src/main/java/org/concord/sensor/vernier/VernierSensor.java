@@ -267,7 +267,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 			case SensorID.LIGHT:
 				setUnit(new SensorUnit("lux"));
-				setName("Illumaninace");
+				setName("Illuminance");
 				setType(QUANTITY_LIGHT);			
 				
 				// This is higher than the others
