@@ -139,7 +139,7 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.SMART_LIGHT_1:
 			case SensorID.SMART_LIGHT_2:
 			case SensorID.SMART_LIGHT_3:
-				setUnit(new SensorUnit("lx"));
+				setUnit(new SensorUnit("lux"));
 				setType(QUANTITY_LIGHT);
 				
 				// we keep this artificially low so we don't restrict 
