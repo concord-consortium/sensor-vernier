@@ -152,10 +152,21 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 					new VernierSensor(LabQuestSensorDevice.this, devService, (int)i,
 							channelType);
 
-				// translate the vernier id to the SenorConfig id
+				// translate the Vernier id to the SensorConfig id
 				sensorConfig.setupSensor(sensorId, null);
+
+				if(sensorId >= 20 && i <= 4){
+					String possibleName = labQuest.getSensorName(i);
+					// sometimes the sensorDDSMem doesn't have the sensor name
+					if(possibleName.length() > 0) {
+						sensorConfig.setName(possibleName);						
+					}
+				}
+
 				sensorConfigList.add(sensorConfig);
 			}
+			
+			labQuest.printAttachedSensors();
 
 			int numSensors = sensorConfigList.size();
 			if(numSensors == 0){
