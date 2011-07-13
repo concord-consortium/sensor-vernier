@@ -141,6 +141,7 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.SMART_LIGHT_3:
 				setUnit(new SensorUnit("lux"));
 				setType(QUANTITY_LIGHT);
+				setName("Illuminance");
 				
 				// we keep this artificially low so we don't restrict 
 				// malformed requests which claim to require small step sizes
