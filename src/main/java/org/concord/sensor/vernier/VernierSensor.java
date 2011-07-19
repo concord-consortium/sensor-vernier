@@ -149,7 +149,16 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 			case SensorID.MAGNETIC_FIELD_HIGH:
 			case SensorID.MAGNETIC_FIELD_LOW:
-				setUnit(new SensorUnit("G"));
+				// turns out on the new sensors the default unit is mT not G
+				// on older sensors I heard second hand that the default is G on the small range
+				
+				// So it isn't clear what to do here. On some devices we can query the datasheet
+				// then we can select the correct calibration page, but on the LabPro that doesn't
+				// seem possible.  On the lab pro the best option seems to be processing the
+				// the sensor description xml that Vernier provides.
+				// Also the next issue is the concept of a request unit should each device be responsible
+				// for converting to the request unit?
+				setUnit(new SensorUnit("mT"));
 				setType(QUANTITY_MAGNETIC_FIELD);
 
 				// FIXME this should be different for the different sensors. 
