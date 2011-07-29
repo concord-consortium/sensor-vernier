@@ -218,6 +218,7 @@ public class VernierSensor extends SensorConfigImpl
 				setStepSize(0.02f);
 				break;			
 			case SensorID.CO2_GAS_LOW:
+			case SensorID.CO2_GAS_HIGH:
 				setUnit(new SensorUnit("ppm"));
 				setType(QUANTITY_CO2_GAS);
 				
@@ -226,6 +227,16 @@ public class VernierSensor extends SensorConfigImpl
 				// for co2 sensors @see AbstractSensorDevice#scoreStepSize				
 				setStepSize(4.0f);
 				break;
+			case SensorID.SOUND_LEVEL:
+				setUnit(new SensorUnit("dB"));
+				setType(QUANTITY_SOUND_INTENSITY);
+				setStepSize(0.2f);
+				break;
+			case SensorID.BLOOD_PRESSURE:
+				setUnit(new SensorUnit("mm Hg"));
+				setType(QUANTITY_BLOOD_PRESSURE);			
+				setStepSize(0.11222f); 									
+				break;			
 			case SensorID.COLORIMETER:
 				setUnit(new SensorUnit("%T"));
 				setType(QUANTITY_COLORIMETER);
@@ -241,6 +252,16 @@ public class VernierSensor extends SensorConfigImpl
 				setType(QUANTITY_CURRENT);
 				setStepSize(0.005f); // 4.9 mA
 				setValueRange(new Range(-10f,10f));
+				break;
+			case SensorID.DISSOLVED_OXYGEN:
+				setUnit(new SensorUnit("mg/L"));
+				setType(QUANTITY_DISSOLVED_OXYGEN);			
+				setStepSize(0.00654f); 									
+				break;
+			case SensorID.SPIROMETER:
+				setUnit(new SensorUnit("L/s"));
+				setType(QUANTITY_LUNG_AIR_FLOW);			
+				setStepSize(0.01437f); 									
 				break;
 			default:
 				setType(QUANTITY_UNKNOWN);
