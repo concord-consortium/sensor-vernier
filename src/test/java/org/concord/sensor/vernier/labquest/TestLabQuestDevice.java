@@ -8,6 +8,6 @@ public class TestLabQuestDevice
 {
 	@Test
 	public void testTemperatureAndLight(){
-		TestInterfaceManager.testTemperatureAndLight(JavaDeviceFactory.VERNIER_LAB_QUEST);
+		TestInterfaceManager.testAllConnectedProbes(JavaDeviceFactory.VERNIER_LAB_QUEST);
 	}
 }
