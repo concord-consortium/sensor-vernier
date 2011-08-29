@@ -103,27 +103,28 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.BAROMETER:
 				setUnit(new SensorUnit("kPa"));
 				setType(QUANTITY_GAS_PRESSURE);
-
+				setName("Barometer");
 				// for pressure this is required so it can tell the diff
 				// between barometer and regular pressure
 				setStepSize(0.01f); 
-				
 				valueRange = new Range(81.0f, 106.0f);
 				setValueRange(valueRange);
 				break;
+
 			case SensorID.GAS_PRESSURE:
 				setUnit(new SensorUnit("kPa"));
 				setType(QUANTITY_GAS_PRESSURE);
-
+				setName("Biology Gas Pressure");
 				// for pressure this is required so it can tell the diff
 				// between barometer and regular pressure
 				setStepSize(0.05f); 
 				break;
+
 			case SensorID.DUAL_R_FORCE_10:
 				setUnit(new SensorUnit("N"));
 				setType(QUANTITY_FORCE);
+				setName("Dual Range Force 10 N");
 				setStepSize(0.01f);
-				
 				valueRange = new Range(-10f, 10f);
 				setValueRange(valueRange);
 				break;
@@ -131,22 +132,23 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.DUAL_R_FORCE_50:
 				setUnit(new SensorUnit("N"));
 				setType(QUANTITY_FORCE);
+				setName("Dual Range Force 50 N");
 				setStepSize(0.05f);
-
 				valueRange = new Range(-50f, 50f);
 				setValueRange(valueRange);
 				break;
+
 			case SensorID.SMART_LIGHT_1:
 			case SensorID.SMART_LIGHT_2:
 			case SensorID.SMART_LIGHT_3:
 				setUnit(new SensorUnit("lux"));
 				setType(QUANTITY_LIGHT);
-				setName("Illuminance");
-				
+				setName("Illuminance");				
 				// we keep this artificially low so we don't restrict 
 				// malformed requests which claim to require small step sizes
 				setStepSize(0.01f);
 				break;
+
 			case SensorID.MAGNETIC_FIELD_HIGH:
 			case SensorID.MAGNETIC_FIELD_LOW:
 				// turns out on the new sensors the default unit is mT not G
@@ -160,109 +162,135 @@ public class VernierSensor extends SensorConfigImpl
 				// for converting to the request unit?
 				setUnit(new SensorUnit("mT"));
 				setType(QUANTITY_MAGNETIC_FIELD);
-
+				setName("Magnetic Field");
 				// FIXME this should be different for the different sensors. 
 				setStepSize(0.0032f);
 				break;
+
 			case SensorID.GO_TEMP:
 				setUnit(new SensorUnit("degC"));
 				setType(QUANTITY_TEMPERATURE_WAND);
-				
+				setName("Temperature");
 				setStepSize(0.01f);
 				break;
 			case SensorID.GO_MOTION:
 				setUnit(new SensorUnit("m"));
 				setType(QUANTITY_DISTANCE);
-
+				setName("Position");
 				setStepSize(0.01f);
 				break;
+
 			case SensorID.SMART_HUMIDITY:
 				setUnit(new SensorUnit("%RH"));
 				setType(QUANTITY_RELATIVE_HUMIDITY);
-				
+				setName("Relative Humidity");
 				// This is higher than the others
 				// but we are not currently paying attention to step size
 				// for humidity sensors @see AbstractSensorDevice#scoreStepSize
 				setStepSize(0.1f);
 				break;
+
 			case SensorID.IR_TEMP:
 				setUnit(new SensorUnit("degC"));
 				setType(QUANTITY_TEMPERATURE_WAND);
-
+				setName("IR Temperature Sensor");
 				setStepSize(0.01f);
 				break;
+
 			case SensorID.PH:
 				setUnit(new SensorUnit("pH"));
 				setType(QUANTITY_PH);
+				setName("pH");
 				setStepSize(0.0077f);
 				break;	
+
 			case SensorID.UVA_INTENSITY:
 				setUnit(new SensorUnit("mW/m^2"));
 				setType(QUANTITY_UVA_INTENSITY);
+				setName("UVA Intensity");
 				setStepSize(5f);
 				setValueRange(new Range(0f, 20000f));
 				break;
+
 			case SensorID.UVB_INTENSITY:
 				setUnit(new SensorUnit("mW/m^2"));
 				setType(QUANTITY_UVB_INTENSITY);
+				setName("UVB Intensity");
 				setStepSize(0.25f);
 				setValueRange(new Range(0f, 1000f));				
 				break;
+
 			case SensorID.SALINITY:
 				setUnit(new SensorUnit("ppt"));
 				setType(QUANTITY_SALINITY);
-				
+				setName("Salinity");
 				// This is just a bit higher than the others so it might
 				// cause problems, but again we aren't paying attention
 				// to the step size right now @see AbstractSensorDevice#scoreStepSize
 				setStepSize(0.02f);
 				break;			
+
 			case SensorID.CO2_GAS_LOW:
 			case SensorID.CO2_GAS_HIGH:
 				setUnit(new SensorUnit("ppm"));
 				setType(QUANTITY_CO2_GAS);
-				
+				setName("CO2");
 				// This is higher than the others
 				// but we are not currently paying attention to step size
 				// for co2 sensors @see AbstractSensorDevice#scoreStepSize				
 				setStepSize(4.0f);
 				break;
+
 			case SensorID.SOUND_LEVEL:
 				setUnit(new SensorUnit("dB"));
 				setType(QUANTITY_SOUND_INTENSITY);
+				setName("Sound Level");
 				setStepSize(0.2f);
 				break;
+
 			case SensorID.BLOOD_PRESSURE:
 				setUnit(new SensorUnit("mm Hg"));
-				setType(QUANTITY_BLOOD_PRESSURE);			
+				setType(QUANTITY_BLOOD_PRESSURE);
+				setName("Cuff Pressure");
 				setStepSize(0.11222f); 									
 				break;			
+
 			case SensorID.COLORIMETER:
 				setUnit(new SensorUnit("%T"));
 				setType(QUANTITY_COLORIMETER);
+				setName("Absorbance");
 				setStepSize(0.057f);
 				break;
+
 			case SensorID.HAND_DYNAMOMETER:
 				setUnit(new SensorUnit("N"));
 				setType(QUANTITY_HAND_DYNAMOMETER);
+				setName("Hand Dynamometer");
 				setStepSize(0.35f);
 				break;
+
 			case SensorID.HIGH_CURRENT:
 				setUnit(new SensorUnit("A"));
 				setType(QUANTITY_CURRENT);
+				setName("High Current Sensor");
 				setStepSize(0.005f); // 4.9 mA
 				setValueRange(new Range(-10f,10f));
 				break;
+
 			case SensorID.DISSOLVED_OXYGEN:
 				setUnit(new SensorUnit("mg/L"));
-				setType(QUANTITY_DISSOLVED_OXYGEN);			
+				setType(QUANTITY_DISSOLVED_OXYGEN);
+				setName("Dissolved Oxygen");
 				setStepSize(0.00654f); 									
 				break;
+
 			case SensorID.SPIROMETER:
 				setUnit(new SensorUnit("L/s"));
-				setType(QUANTITY_LUNG_AIR_FLOW);			
+				setType(QUANTITY_LUNG_AIR_FLOW);
+				setName("Flow Rate");
 				setStepSize(0.01437f); 									
 				break;
+
 			default:
 				setType(QUANTITY_UNKNOWN);
 				break;				
