@@ -283,7 +283,14 @@ public class VernierSensor extends SensorConfigImpl
 				setName("Dissolved Oxygen");
 				setStepSize(0.00654f); 									
 				break;
-
+				
+			case SensorID.OXYGEN_GAS_CK:
+				setUnit(new SensorUnit("%"));
+				setType(QUANTITY_OXYGEN_GAS);
+				setName("Oxygen Gas");
+				setStepSize(0.01f);
+				break;
+				
 			case SensorID.SPIROMETER:
 				setUnit(new SensorUnit("L/s"));
 				setType(QUANTITY_LUNG_AIR_FLOW);
@@ -368,14 +375,14 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(co2GasCalibration);			
 				break;
 			case SensorID.OXYGEN_GAS:
-				setUnit(new SensorUnit("ppt"));
+				setUnit(new SensorUnit("%"));
 				setName("Oxygen Gas");
 				setType(QUANTITY_OXYGEN_GAS);			
 
 				// This is higher than the others
 				// but we are not currently paying attention to step size
 				// for oxygen sensors @see AbstractSensorDevice#scoreStepSize				
-				setStepSize(0.1f); 
+				setStepSize(0.01f); 
 				setCalibration(oxygenGasCalibration);			
 				break;
 			case SensorID.EKG:
@@ -593,12 +600,12 @@ public class VernierSensor extends SensorConfigImpl
 	
 	/**
 	 * Oxygen Gas Calibration
-	 * this is the ppt calibration
+	 * this is the % calibration
 	 */
 	public final static SensorCalibration oxygenGasCalibration =
 		new LinearCalibration(
 				0f,      // k0
-				67.69f   // k1
+				6.769f   // k1
 				);
 
 }

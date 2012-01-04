@@ -64,6 +64,7 @@ public final class SensorID{
 	public final static int SOUND_LEVEL = 74; 
 	public final static int CO2_GAS_LOW = 75;
 	public final static int CO2_GAS_HIGH = 76;
+	public final static int OXYGEN_GAS_CK = 77; // note this is a 'smart' version of #18 above
 	public final static int HIGH_CURRENT = 90;
 
 	/*
