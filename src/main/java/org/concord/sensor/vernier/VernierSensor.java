@@ -411,11 +411,18 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.CO2:
 			case SensorID.OXYGEN:
 			case SensorID.TEMPERATURE_F:
-			case SensorID.HEART_RATE:
 				this.device.log("Sensor type is not supported yet: " + sensorId);
 				setType(QUANTITY_UNKNOWN);
 				break;
-
+				
+			case SensorID.HEART_RATE:
+				setUnit(new SensorUnit("v"));
+				setName("Heart Rate Signal");
+				setType(QUANTITY_HEART_RATE_SIGNAL);
+				setStepSize(0.002f);
+				setCalibration(rawVoltageCalibration);			
+				break;
+				
 			default:
 				this.device.log("Unknown sensor id: " + sensorId);
 				setType(QUANTITY_UNKNOWN);
