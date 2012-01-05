@@ -256,10 +256,18 @@ public class VernierSensor extends SensorConfigImpl
 				break;			
 
 			case SensorID.COLORIMETER:
-				setUnit(new SensorUnit("%T"));
+				// Note the vernier software normally converts this using a log function:
+				// log(100/value)  
 				setType(QUANTITY_COLORIMETER);
 				setName("Absorbance");
 				setStepSize(0.057f);
+				// Note this calibration will not be used by LabPro, it seems likely that
+				// the LabPro will not automatically convert to the Absorbance, instead
+				// it will return %T.  I'm waiting on a Colorimeter to verify this.
+				setCalibration(new SensorCalibration(){ public float calibrate(float voltage) {
+					float percentT = 28.571f * voltage;
+					return (float)Math.log10(100f/percentT);
+				}});
 				break;
 
 			case SensorID.HAND_DYNAMOMETER:
@@ -614,5 +622,4 @@ public class VernierSensor extends SensorConfigImpl
 				0f,      // k0
 				6.769f   // k1
 				);
-
 }
