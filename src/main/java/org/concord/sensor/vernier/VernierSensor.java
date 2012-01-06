@@ -306,6 +306,24 @@ public class VernierSensor extends SensorConfigImpl
 				setStepSize(0.01437f); 									
 				break;
 
+			case SensorID.CONDUCTIVITY_200: 
+			case SensorID.CONDUCTIVITY_2000:
+			case SensorID.CONDUCTIVITY_20000:
+				setUnit(new SensorUnit("uS/cm"));
+				setType(QUANTITY_CONDUCTIVITY);
+				setName("Conductivity");
+				switch(sensorId){
+				case SensorID.CONDUCTIVITY_200: 
+					setStepSize(0.1f);
+					break;
+				case SensorID.CONDUCTIVITY_2000:
+					setStepSize(1f);
+					break;
+				case SensorID.CONDUCTIVITY_20000:
+					setStepSize(10f);
+					break;
+				}
+
 			default:
 				setType(QUANTITY_UNKNOWN);
 				break;				
