@@ -285,6 +285,7 @@ public class GoIOSensorDevice extends AbstractSensorDevice implements
 					// ask goio sdk to convert value
 					calibratedData = (float) currentGoDevice.calibrateData(voltage);
 				}
+				calibratedData = sensorConfig.doPostCalibration(calibratedData);
 			}
 			values[offset + sensorIndex + i*nextSampleOffset] = calibratedData;
 		}

@@ -245,7 +245,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		return currentErrorMessage;
 	}
 
-	float [] dataValues = new float[2];
+	float [] dataValues = new float[16];
 
 	private SensorSerialPort usbSerialPort;
 
@@ -254,6 +254,9 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 	protected int streamRead(float[] values, int offset, int nextSampleOffset, 
 			DeviceReader reader, StreamingBuffer streamingBuffer)
 	{
+		// get the current channels from the currentConfig
+		SensorConfig [] sensors = currentConfig.getSensorConfigs();
+
 		// read all the bytes from the port and look for the 
 		// {} blocks
 		try {
@@ -264,8 +267,11 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 				if(count <= 0){
 					break;
 				}
+				// we are not doing any checking if the number or read values
+				// matches the number of configured channels. 
 				for(int i=0; i<count; i++){
-					values[offset + nextSampleOffset * numSamples + i] = dataValues[i];
+					float value = ((VernierSensor)sensors[i]).doPostCalibration(dataValues[i]);
+					values[offset + nextSampleOffset * numSamples + i] = value;
 				}
 				numSamples++;
 			}

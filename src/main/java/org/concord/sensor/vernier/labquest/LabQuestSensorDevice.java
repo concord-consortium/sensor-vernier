@@ -293,13 +293,16 @@ public class LabQuestSensorDevice extends AbstractSensorDevice
 						if(type == SensorConfig.QUANTITY_RAW_DATA_1 ||
 								type == SensorConfig.QUANTITY_RAW_DATA_2){
 							calibratedData = pMeasurementsBuf[i];
-						} else if(sensorConfig.getCalibration() != null){
-							float voltage = labQuest.convertToVoltage((byte)channel, 
-									pMeasurementsBuf[i], vernierProbeType);
-							calibratedData = sensorConfig.getCalibration().calibrate(voltage);
 						} else {
-							calibratedData = labQuest.calibrateData2(
-									(byte)channel, pMeasurementsBuf[i]);
+							if(sensorConfig.getCalibration() != null){
+								float voltage = labQuest.convertToVoltage((byte)channel, 
+										pMeasurementsBuf[i], vernierProbeType);
+								calibratedData = sensorConfig.getCalibration().calibrate(voltage);
+							} else {
+								calibratedData = labQuest.calibrateData2(
+										(byte)channel, pMeasurementsBuf[i]);
+							}
+							calibratedData = sensorConfig.doPostCalibration(calibratedData);
 						}
 						values[offset + sensorIndex + i*nextSampleOffset] = calibratedData;
 					}

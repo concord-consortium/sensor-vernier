@@ -44,7 +44,8 @@ public class VernierSensor extends SensorConfigImpl
 	 * in the verniersensormap.xml file there is a "Type" attribute on each sensor
 	 * that defines this property.
 	 */
-	byte vernierProbeType = kProbeTypeAnalog5V;	
+	byte vernierProbeType = kProbeTypeAnalog5V;
+	private SensorCalibration postCalibrationEquation;	
 	
 	/**
      * @param device
@@ -66,6 +67,26 @@ public class VernierSensor extends SensorConfigImpl
 	public SensorCalibration getCalibration()
 	{
 		return calibrationEquation;
+	}
+	
+	public void setPostCalibration(SensorCalibration calibration)
+	{
+		postCalibrationEquation = calibration;
+	}
+	
+	public SensorCalibration getPostCalibration()
+	{
+		return postCalibrationEquation;
+	}
+	
+	public float doPostCalibration(float input)
+	{
+		SensorCalibration postCalibration = getPostCalibration();
+		if(postCalibration != null){
+			return postCalibration.calibrate(input);
+		}
+		
+		return input;
 	}
 	
 	/**
@@ -256,17 +277,18 @@ public class VernierSensor extends SensorConfigImpl
 				break;			
 
 			case SensorID.COLORIMETER:
-				// Note the vernier software normally converts this using a log function:
-				// log(100/value)  
 				setType(QUANTITY_COLORIMETER);
 				setName("Absorbance");
+				
+				// I doubt this is the right step size
 				setStepSize(0.057f);
-				// Note this calibration will not be used by LabPro, it seems likely that
-				// the LabPro will not automatically convert to the Absorbance, instead
-				// it will return %T.  I'm waiting on a Colorimeter to verify this.
-				setCalibration(new SensorCalibration(){ public float calibrate(float voltage) {
-					float percentT = 28.571f * voltage;
-					return (float)Math.log10(100f/percentT);
+
+				// the built in calibration done by the LabPro, and LabQuest, and GoIO sdk 
+				// should return %T, so we need to do this postCalibration to turn that into
+				// absorbance
+
+				setPostCalibration(new SensorCalibration(){ public float calibrate(float input) {
+					return (float)Math.log10(100f/input);
 				}});
 				break;
 
