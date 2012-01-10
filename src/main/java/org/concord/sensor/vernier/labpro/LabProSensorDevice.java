@@ -11,7 +11,6 @@ import org.concord.sensor.SensorConfig;
 import org.concord.sensor.device.DeviceReader;
 import org.concord.sensor.device.DeviceService;
 import org.concord.sensor.device.impl.AbstractStreamingSensorDevice;
-import org.concord.sensor.device.impl.SensorConfigImpl;
 import org.concord.sensor.device.impl.SerialPortParams;
 import org.concord.sensor.device.impl.StreamingBuffer;
 import org.concord.sensor.impl.ExperimentConfigImpl;
@@ -58,6 +57,22 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 				close();
 			}
 		});    	
+    }
+    
+    @Override
+    public void close() 
+    {
+		// attempt to reset before close incase we 
+		// are closed in the middle of data collection
+		try {
+			if (port != null && port.isOpen() && protocol != null) {
+				protocol.reset();
+			}
+		} catch (SerialException e) {
+			// if we can't reset don't worry about it
+		}
+
+		super.close();
     }
     
 	/* (non-Javadoc)
@@ -267,9 +282,14 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 				if(count <= 0){
 					break;
 				}
-				// we are not doing any checking if the number or read values
-				// matches the number of configured channels. 
-				for(int i=0; i<count; i++){
+				
+				// FIXME: we are not matching up sensors to ports correctly
+				// it seems from the documentation that the order of the returned data will be 
+				// based on the port numbers.  This might not match the order of the sensors
+				// in the config.
+				// NOTE: there is an extra value in the dataValues here which is the time offset
+				// from when the data was started.
+				for(int i=0; i<count && i < sensors.length; i++){
 					float value = ((VernierSensor)sensors[i]).doPostCalibration(dataValues[i]);
 					values[offset + nextSampleOffset * numSamples + i] = value;
 				}
@@ -436,7 +456,7 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 		// but sense we are in a crunch lets just use the java conventions
 		// and deal with the waba stuff when we need it.
 		int count = 0;
-		StringTokenizer toks = new StringTokenizer(result, "{},");
+		StringTokenizer toks = new StringTokenizer(result, "{},\r\n");
 		while(toks.hasMoreTokens() && count < values.length){
 			String numberStr = toks.nextToken();
 			try {
@@ -580,9 +600,10 @@ public class LabProSensorDevice extends AbstractStreamingSensorDevice
 
 	protected SensorConfig createSensorConfig(int type, int requestPort) 
 	{
-    	SensorConfigImpl config = new SensorConfigImpl();
+		VernierSensor config = 
+			new VernierSensor(this, devService, requestPort+1,
+					VernierSensor.CHANNEL_TYPE_ANALOG);
     	config.setType(type);
-    	config.setPort(requestPort+1);
     	return config;
 	}
 	

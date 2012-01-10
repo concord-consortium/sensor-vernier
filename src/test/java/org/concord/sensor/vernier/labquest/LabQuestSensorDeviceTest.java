@@ -2,6 +2,7 @@ package org.concord.sensor.vernier.labquest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.swing.JOptionPane;
@@ -28,8 +29,7 @@ public class LabQuestSensorDeviceTest extends SensorDeviceTest {
 		
 		ExperimentConfig experimentConfig = device.getCurrentConfig();
 		assertNotNull("Non null experiment config", experimentConfig);
-		assertEquals("Unknown sensor type", SensorConfig.QUANTITY_UNKNOWN,
-				experimentConfig.getSensorConfigs()[0].getType());
+		assertNull("No sensors", experimentConfig.getSensorConfigs());
 
 
 		byte ddsChecksum = ((LabQuestSensorDevice)device).getCurrentLabQuest().ddsMemCalculateChecksum((byte) 0);
@@ -79,7 +79,7 @@ public class LabQuestSensorDeviceTest extends SensorDeviceTest {
 		Thread.sleep(500);
 		count = device.read(values, 0, 1, null);
 		assertTrue("Read got some valid values", count > 0);		
-		assertTrue("Voltage value is floating", values[0] >= 2 && values[0] <= 3);
+		assertTrue("Voltage value " + values[0] + " is floating", values[0] >= 2 && values[0] <= 4);
 				
 		device.stop(true);				
 	}
