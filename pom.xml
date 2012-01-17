@@ -28,16 +28,6 @@
       <scope>compile</scope>
       <optional/>	
     </dependency>
-    <dependency>
-      <groupId>org.concord</groupId>
-      <artifactId>framework</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.concord</groupId>
-      <artifactId>data</artifactId>
-      <scope>compile</scope>
-    </dependency>
 	<dependency>
 	  <groupId>org.concord.sensor</groupId>
   	  <artifactId>labquest-jna</artifactId>

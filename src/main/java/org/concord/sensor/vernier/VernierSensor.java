@@ -9,7 +9,6 @@ import org.concord.sensor.device.impl.SensorConfigImpl;
 import org.concord.sensor.impl.LinearCalibration;
 import org.concord.sensor.impl.Range;
 import org.concord.sensor.impl.SensorCalibration;
-import org.concord.sensor.impl.SensorUnit;
 
 public class VernierSensor extends SensorConfigImpl
 {
@@ -102,7 +101,7 @@ public class VernierSensor extends SensorConfigImpl
 				setConfirmed(true);
 
 				// it is digital sensor
-				setUnit(new SensorUnit("m"));
+				setUnit("m");
 				setType(QUANTITY_DISTANCE);
 
 				vernierProbeType = kProbeTypeMD;
@@ -122,7 +121,7 @@ public class VernierSensor extends SensorConfigImpl
 			
 			switch(sensorId){
 			case SensorID.BAROMETER:
-				setUnit(new SensorUnit("kPa"));
+				setUnit("kPa");
 				setType(QUANTITY_GAS_PRESSURE);
 				setName("Barometer");
 				// for pressure this is required so it can tell the diff
@@ -133,7 +132,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.GAS_PRESSURE:
-				setUnit(new SensorUnit("kPa"));
+				setUnit("kPa");
 				setType(QUANTITY_GAS_PRESSURE);
 				setName("Biology Gas Pressure");
 				// for pressure this is required so it can tell the diff
@@ -142,7 +141,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.DUAL_R_FORCE_10:
-				setUnit(new SensorUnit("N"));
+				setUnit("N");
 				setType(QUANTITY_FORCE);
 				setName("Dual Range Force 10 N");
 				setStepSize(0.01f);
@@ -151,7 +150,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.DUAL_R_FORCE_50:
-				setUnit(new SensorUnit("N"));
+				setUnit("N");
 				setType(QUANTITY_FORCE);
 				setName("Dual Range Force 50 N");
 				setStepSize(0.05f);
@@ -162,7 +161,7 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.SMART_LIGHT_1:
 			case SensorID.SMART_LIGHT_2:
 			case SensorID.SMART_LIGHT_3:
-				setUnit(new SensorUnit("lux"));
+				setUnit("lux");
 				setType(QUANTITY_LIGHT);
 				setName("Illuminance");				
 				// we keep this artificially low so we don't restrict 
@@ -181,7 +180,7 @@ public class VernierSensor extends SensorConfigImpl
 				// the sensor description xml that Vernier provides.
 				// Also the next issue is the concept of a request unit should each device be responsible
 				// for converting to the request unit?
-				setUnit(new SensorUnit("mT"));
+				setUnit("mT");
 				setType(QUANTITY_MAGNETIC_FIELD);
 				setName("Magnetic Field");
 				// FIXME this should be different for the different sensors. 
@@ -189,20 +188,20 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.GO_TEMP:
-				setUnit(new SensorUnit("degC"));
+				setUnit("degC");
 				setType(QUANTITY_TEMPERATURE_WAND);
 				setName("Temperature");
 				setStepSize(0.01f);
 				break;
 			case SensorID.GO_MOTION:
-				setUnit(new SensorUnit("m"));
+				setUnit("m");
 				setType(QUANTITY_DISTANCE);
 				setName("Position");
 				setStepSize(0.01f);
 				break;
 
 			case SensorID.SMART_HUMIDITY:
-				setUnit(new SensorUnit("%RH"));
+				setUnit("%RH");
 				setType(QUANTITY_RELATIVE_HUMIDITY);
 				setName("Relative Humidity");
 				// This is higher than the others
@@ -212,21 +211,21 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.IR_TEMP:
-				setUnit(new SensorUnit("degC"));
+				setUnit("degC");
 				setType(QUANTITY_TEMPERATURE_WAND);
 				setName("IR Temperature Sensor");
 				setStepSize(0.01f);
 				break;
 
 			case SensorID.PH:
-				setUnit(new SensorUnit("pH"));
+				setUnit("pH");
 				setType(QUANTITY_PH);
 				setName("pH");
 				setStepSize(0.0077f);
 				break;	
 
 			case SensorID.UVA_INTENSITY:
-				setUnit(new SensorUnit("mW/m^2"));
+				setUnit("mW/m^2");
 				setType(QUANTITY_UVA_INTENSITY);
 				setName("UVA Intensity");
 				setStepSize(5f);
@@ -234,7 +233,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.UVB_INTENSITY:
-				setUnit(new SensorUnit("mW/m^2"));
+				setUnit("mW/m^2");
 				setType(QUANTITY_UVB_INTENSITY);
 				setName("UVB Intensity");
 				setStepSize(0.25f);
@@ -242,7 +241,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.SALINITY:
-				setUnit(new SensorUnit("ppt"));
+				setUnit("ppt");
 				setType(QUANTITY_SALINITY);
 				setName("Salinity");
 				// This is just a bit higher than the others so it might
@@ -253,7 +252,7 @@ public class VernierSensor extends SensorConfigImpl
 
 			case SensorID.CO2_GAS_LOW:
 			case SensorID.CO2_GAS_HIGH:
-				setUnit(new SensorUnit("ppm"));
+				setUnit("ppm");
 				setType(QUANTITY_CO2_GAS);
 				setName("CO2");
 				// This is higher than the others
@@ -263,14 +262,14 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.SOUND_LEVEL:
-				setUnit(new SensorUnit("dB"));
+				setUnit("dB");
 				setType(QUANTITY_SOUND_INTENSITY);
 				setName("Sound Level");
 				setStepSize(0.2f);
 				break;
 
 			case SensorID.BLOOD_PRESSURE:
-				setUnit(new SensorUnit("mm Hg"));
+				setUnit("mm Hg");
 				setType(QUANTITY_BLOOD_PRESSURE);
 				setName("Cuff Pressure");
 				setStepSize(0.11222f); 									
@@ -293,14 +292,14 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.HAND_DYNAMOMETER:
-				setUnit(new SensorUnit("N"));
+				setUnit("N");
 				setType(QUANTITY_HAND_DYNAMOMETER);
 				setName("Hand Dynamometer");
 				setStepSize(0.35f);
 				break;
 
 			case SensorID.HIGH_CURRENT:
-				setUnit(new SensorUnit("A"));
+				setUnit("A");
 				setType(QUANTITY_CURRENT);
 				setName("High Current Sensor");
 				setStepSize(0.005f); // 4.9 mA
@@ -308,21 +307,21 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 
 			case SensorID.DISSOLVED_OXYGEN:
-				setUnit(new SensorUnit("mg/L"));
+				setUnit("mg/L");
 				setType(QUANTITY_DISSOLVED_OXYGEN);
 				setName("Dissolved Oxygen");
 				setStepSize(0.00654f); 									
 				break;
 				
 			case SensorID.OXYGEN_GAS_CK:
-				setUnit(new SensorUnit("%"));
+				setUnit("%");
 				setType(QUANTITY_OXYGEN_GAS);
 				setName("Oxygen Gas");
 				setStepSize(0.01f);
 				break;
 				
 			case SensorID.SPIROMETER:
-				setUnit(new SensorUnit("L/s"));
+				setUnit("L/s");
 				setType(QUANTITY_LUNG_AIR_FLOW);
 				setName("Flow Rate");
 				setStepSize(0.01437f); 									
@@ -331,7 +330,7 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.CONDUCTIVITY_200: 
 			case SensorID.CONDUCTIVITY_2000:
 			case SensorID.CONDUCTIVITY_20000:
-				setUnit(new SensorUnit("uS/cm"));
+				setUnit("uS/cm");
 				setType(QUANTITY_CONDUCTIVITY);
 				setName("Conductivity");
 				switch(sensorId){
@@ -361,7 +360,7 @@ public class VernierSensor extends SensorConfigImpl
 
 			switch(sensorId){
 			case SensorID.TEMPERATURE_C:
-				setUnit(new SensorUnit("degC"));
+				setUnit("degC");
 				setName("Temperature");
 				setType(QUANTITY_TEMPERATURE);			
 				
@@ -371,7 +370,7 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(temperatureCalibration);
 				break;
 			case SensorID.THEROCOUPLE:
-				setUnit(new SensorUnit("degC"));
+				setUnit("degC");
 				setName("Temperature");
 				setType(QUANTITY_TEMPERATURE);			
 				// we keep this artificially low so we don't restrict 
@@ -380,7 +379,7 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(temperatureCalibration);
 				break;
 			case SensorID.LIGHT:
-				setUnit(new SensorUnit("lux"));
+				setUnit("lux");
 				setName("Illuminance");
 				setType(QUANTITY_LIGHT);			
 				
@@ -393,7 +392,7 @@ public class VernierSensor extends SensorConfigImpl
 			case SensorID.TI_VOLTAGE:			
 			case SensorID.VOLTAGE:
 			case SensorID.CV_VOLTAGE:
-				setUnit(new SensorUnit("V"));
+				setUnit("V");
 				setName("Voltage");
 				setType(QUANTITY_VOLTAGE);
 
@@ -412,7 +411,7 @@ public class VernierSensor extends SensorConfigImpl
 				}
 				break;
 			case SensorID.CO2_GAS:
-				setUnit(new SensorUnit("ppm"));
+				setUnit("ppm");
 				setName("CO2 Gas");
 				setType(QUANTITY_CO2_GAS);			
 
@@ -423,7 +422,7 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(co2GasCalibration);			
 				break;
 			case SensorID.OXYGEN_GAS:
-				setUnit(new SensorUnit("%"));
+				setUnit("%");
 				setName("Oxygen Gas");
 				setType(QUANTITY_OXYGEN_GAS);			
 
@@ -434,7 +433,7 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(oxygenGasCalibration);			
 				break;
 			case SensorID.EKG:
-				setUnit(new SensorUnit("mV"));
+				setUnit("mV");
 				setName("EKG");
 				setType(QUANTITY_EKG);
 				setStepSize(0.002f); // FIXME: this is a hack we should be able calc this
@@ -444,7 +443,7 @@ public class VernierSensor extends SensorConfigImpl
 				setCalibration(rawVoltageCalibration);
 				break;
 			case SensorID.CV_CURRENT:
-				setUnit(new SensorUnit("A"));
+				setUnit("A");
 				setType(QUANTITY_CURRENT);
 				setStepSize(0.0003f); // this is assuming 12bit resolution which is on GoLink, LabPro, LabQuest: 0.31 mA 
 				setValueRange(new Range(-0.6f, 0.6f));
@@ -464,7 +463,7 @@ public class VernierSensor extends SensorConfigImpl
 				break;
 				
 			case SensorID.HEART_RATE:
-				setUnit(new SensorUnit("v"));
+				setUnit("v");
 				setName("Heart Rate Signal");
 				setType(QUANTITY_HEART_RATE_SIGNAL);
 				setStepSize(0.002f);
@@ -499,7 +498,7 @@ public class VernierSensor extends SensorConfigImpl
 			}
 			switch(request.getType()){
 			case QUANTITY_RELATIVE_HUMIDITY:
-				setUnit(new SensorUnit("%RH"));
+				setUnit("%RH");
 				setName("Relative Humidity");
 				setType(QUANTITY_RELATIVE_HUMIDITY);
 				setStepSize(0.04f);
@@ -508,7 +507,7 @@ public class VernierSensor extends SensorConfigImpl
 			case QUANTITY_FORCE:
 				// if we are here it means they are using
 				// a student force sensor
-				setUnit(new SensorUnit("N"));
+				setUnit("N");
 				setName("Force");
 				setType(QUANTITY_FORCE);
 				setStepSize(0.02f);
